@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tiger Zone Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Noto+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* One column, three steps: enter location, see result, see map. */
+:root{
+  --bg:#ECF0E8; --surface:#F8FAF5; --ink:#17251C; --muted:#56685B; --line:#C9D3C3;
+  --accent:#B85E0F; --accent-ink:#FFFFFF; --inner:#D39512; --outer:#C23B27; --ok:#2C7647;
+  --map-bg:#DCE5D4; --map-grid:#B9C7B1; --map-ink:#3E5244; --route:#17251C;
+  --font-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --font-body:"Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1611; --surface:#16211A; --ink:#E2EAE0; --muted:#93A597; --line:#2B3B30;
+  --accent:#F0953A; --accent-ink:#1A1206; --inner:#F2C14E; --outer:#F06A55; --ok:#5CC98A;
+  --map-bg:#132019; --map-grid:#24362A; --map-ink:#A9BBAD; --route:#E2EAE0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1611; --surface:#16211A; --ink:#E2EAE0; --muted:#93A597; --line:#2B3B30;
+  --accent:#F0953A; --accent-ink:#1A1206; --inner:#F2C14E; --outer:#F06A55; --ok:#5CC98A;
+  --map-bg:#132019; --map-grid:#24362A; --map-ink:#A9BBAD; --route:#E2EAE0; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
+.app{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:16px 40px;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--font-display);font-weight:600;margin:0;text-wrap:balance}
+h1{font-size:2rem;line-height:1.05}
+h2{font-size:1.35rem}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;flex:none;border-radius:50%;background:repeating-linear-gradient(115deg,var(--accent) 0 7px,var(--ink) 7px 11px)}
+.sub{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.step{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--font-display);font-weight:600;font-size:1rem;margin-right:8px;vertical-align:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f label,.lbl{font-size:.85rem;color:var(--muted);font-weight:500}
+input[type=text],input[type=number],input[type=datetime-local]{background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:12px;min-width:0;width:100%;font-size:1.1rem}
+input.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.err{font-size:.8rem;color:var(--outer)}
+.when{margin-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:8px 14px;font-size:.95rem}
+.chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+#customWhen{margin-top:8px}
+.go{margin-top:16px;width:100%;border:0;border-radius:12px;padding:16px;background:var(--accent);color:var(--accent-ink);font-family:var(--font-display);font-weight:600;font-size:1.4rem;letter-spacing:.02em}
+.tip{margin:10px 0 0;font-size:.82rem;color:var(--muted)}
+.samplenote{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;font-size:.82rem;color:var(--accent);border:1px dashed var(--accent);border-radius:10px;padding:8px 10px}
+.result{background:var(--ink);color:var(--bg);border-radius:16px;padding:20px}
+.result .eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;opacity:.75}
+.headline{font-family:var(--font-display);font-weight:600;font-size:clamp(1.9rem,8vw,2.8rem);line-height:1.08;margin:6px 0 4px;text-wrap:balance}
+.headline .in{color:var(--inner)} .headline .out{color:var(--outer)}
+.result p{margin:6px 0 0;font-size:.95rem;opacity:.9}
+.ahead{margin-top:14px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ahead div{background:color-mix(in srgb,var(--bg) 10%,transparent);border-radius:10px;padding:8px 10px;min-width:0}
+.ahead b{display:block;font-family:var(--font-display);font-size:1.25rem;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ahead span{font-size:.75rem;opacity:.8}
+.mapcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.mapwrap{position:relative;height:min(64vh,560px);min-height:360px;background:var(--map-bg)}
+#map{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#fly{position:absolute;inset:0;width:100%;height:100%;z-index:3}
+#skipFly{position:absolute;right:10px;bottom:10px;z-index:4;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;border-radius:8px;padding:6px 12px;font-size:.85rem}
+.mtop{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
+.mtop>*{pointer-events:auto}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:8px 12px;font-size:.9rem}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.zoom{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.zoom button{border:0;background:transparent;width:40px;height:40px;font-size:1.2rem}
+.zoom button+button{border-top:1px solid var(--line)}
+.legend{position:absolute;left:10px;bottom:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:.78rem;display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center}
+.sw{width:16px;height:12px;border-radius:3px;display:inline-block}
+.attr{position:absolute;right:6px;bottom:4px;font-size:.66rem;color:var(--map-ink);background:var(--surface);padding:0 5px;border-radius:4px;opacity:.85}
+.tilenote{position:absolute;left:50%;top:60px;transform:translateX(-50%);width:min(92%,430px);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:.8rem;color:var(--muted);display:flex;gap:8px;align-items:flex-start;z-index:2}
+.tilenote button{border:0;background:transparent;color:var(--muted);font-size:1.1rem;line-height:1}
+.info{position:absolute;z-index:2;max-width:240px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:.82rem;box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
+.mapbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-size:.95rem;text-decoration:none;color:var(--ink)}
+.btn.sat{border-color:var(--accent);color:var(--accent);font-weight:500}
+.btn[aria-pressed=true]{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.danger{color:var(--outer);border-color:var(--outer)}
+details.card>summary{font-family:var(--font-display);font-weight:600;font-size:1.25rem;cursor:pointer}
+details.card[open]>summary{margin-bottom:12px}
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.hist li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.num{width:26px;height:26px;border-radius:50%;border:2px solid var(--route);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:500}
+.hist li.last .num{background:var(--outer);border-color:var(--outer);color:#fff}
+.hist small{color:var(--muted);display:block}
+.mono{font-family:var(--font-mono);font-size:.85em;font-variant-numeric:tabular-nums}
+.x{border:0;background:transparent;color:var(--muted);font-size:.85rem;padding:4px}
+.x[data-armed]{color:var(--outer);font-weight:500}
+.note{font-size:.85rem;color:var(--muted);margin:10px 0 0}
+.foot{font-size:.82rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 15px;border-radius:10px;font-size:.9rem;z-index:20}
+@media (max-width:520px){.ahead{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="mark" aria-hidden="true"></span>
+    <div>
+      <h1>Tiger kahan ho sakta hai?</h1>
+      <p class="sub">Tiger Zone Tracker · location daalo, zone dekho</p>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2><span class="step">1</span>Tiger ki location daalo</h2>
+    <form id="qForm" novalidate>
+      <div class="row">
+        <div class="f"><label for="qLat">Latitude</label><input type="text" class="mono" inputmode="decimal" id="qLat" placeholder="20.8200"><span class="err" id="eLat"></span></div>
+        <div class="f"><label for="qLng">Longitude</label><input type="text" class="mono" inputmode="decimal" id="qLng" placeholder="80.7550"><span class="err" id="eLng"></span></div>
+      </div>
+      <div class="when">
+        <span class="lbl" id="whenLbl">Tiger kab dekha gaya?</span>
+        <div class="chips" role="group" aria-labelledby="whenLbl">
+          <button type="button" class="chip" data-h="0" aria-pressed="true">Abhi</button>
+          <button type="button" class="chip" data-h="6" aria-pressed="false">6 ghante pehle</button>
+          <button type="button" class="chip" data-h="24" aria-pressed="false">Kal</button>
+          <button type="button" class="chip" data-h="48" aria-pressed="false">2 din pehle</button>
+          <button type="button" class="chip" data-h="custom" aria-pressed="false">Date chuno</button>
+        </div>
+        <input type="datetime-local" id="customWhen" hidden aria-label="Date aur time">
+        <span class="err" id="eWhen"></span>
+      </div>
+      <button type="submit" class="go">Pata karo</button>
+      <p class="tip">Map par tap karke bhi location chun sakte ho.</p>
+    </form>
+    <div class="samplenote" id="sampleNote">Abhi sample location dikh rahi hai. Apni location daalte hi ye hat jayegi.</div>
+  </section>
+
+  <section class="result" aria-live="polite">
+    <span class="eyebrow"><span class="step" style="background:var(--bg);color:var(--ink)">2</span>Result</span>
+    <div class="headline" id="headline">–</div>
+    <p id="subline"></p>
+    <div class="ahead" id="ahead"></div>
+  </section>
+
+  <section class="mapcard">
+    <div class="mapwrap" id="mapwrap">
+      <canvas id="map" aria-label="Tiger zone map"></canvas>
+      <canvas id="fly" hidden aria-hidden="true"></canvas>
+      <button type="button" id="skipFly" hidden>Skip</button>
+      <div class="mtop">
+        <div class="seg" role="group" aria-label="Map type">
+          <button type="button" data-layer="sat" aria-pressed="true">Satellite</button>
+          <button type="button" data-layer="street" aria-pressed="false">Map</button>
+        </div>
+        <div class="zoom">
+          <button type="button" id="zin" aria-label="Zoom in">+</button>
+          <button type="button" id="zout" aria-label="Zoom out">−</button>
+          <button type="button" id="zfit" aria-label="Tiger par wapas">◎</button>
+        </div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span class="sw" style="background:var(--inner)"></span><span>Zyada sambhavna</span>
+        <span class="sw" style="background:var(--outer)"></span><span>Zyada se zyada</span>
+      </div>
+      <div class="info" id="info" hidden></div>
+      <div class="attr" id="attr"></div>
+      <div class="tilenote" id="tilenote" hidden>
+        <span>Is preview mein asli satellite photo load nahi hoti. Neeche "Google Earth mein dekho" dabao, ya downloaded file Chrome mein kholo.</span>
+        <button type="button" id="tilenoteX" aria-label="Band karo">×</button>
+      </div>
+    </div>
+    <div class="mapbar">
+      <a class="btn sat" id="earthLink" href="#" target="_blank" rel="noopener">Google Earth mein dekho (asli satellite)</a>
+      <a class="btn" id="gmapLink" href="#" target="_blank" rel="noopener">Google Maps satellite</a>
+      <button type="button" class="btn" id="replay">Space se dobara dekho</button>
+      <button type="button" class="btn" id="soundBtn" aria-pressed="true">Awaaz: On</button>
+    </div>
+  </section>
+
+  <details class="card" id="histBox">
+    <summary>Pichhli locations (<span id="histCount">0</span>)</summary>
+    <ul class="hist" id="hist"></ul>
+    <p class="note">Jitni zyada locations daaloge, tiger ki asli speed utni sahi niklegi. 4 ya zyada location hone par speed inhi se nikalti hai.</p>
+    <div class="mapbar" style="padding:10px 0 0">
+      <button type="button" class="btn danger" id="clearBtn">Sab saaf karo (naya tiger)</button>
+      <button type="button" class="btn" id="dlBtn">File download karo</button>
+    </div>
+  </details>
+
+  <details class="card">
+    <summary>Speed setting</summary>
+    <div class="row" style="margin-top:0">
+      <div class="f"><label for="setAvg">Aam speed (km/din)</label><input type="number" id="setAvg" min="0.5" step="0.5"></div>
+      <div class="f"><label for="setMax">Zyada se zyada (km/din)</label><input type="number" id="setMax" min="0.5" step="0.5"></div>
+    </div>
+    <p class="note">Ye tab use hoti hai jab location kam hon. Apne forest officer ke anubhav ke hisaab se badal sakte ho.</p>
+  </details>
+
+  <p class="foot">Kaise nikalta hai: doori = speed × time. Peela circle = aam speed se, laal circle = zyada se zyada speed se. Ye sambhavna batata hai, pakki location nahi. Data isi phone/browser mein save rehta hai.</p>
+</div>
+
+<script id="seed" type="application/json">null</script>
+<script id="app-js">
+(function(){
+"use strict";
+var HR=3600e3, DAY=86400e3, KEY="tigerZoneSimple.v1", FLOOR=0.5, CAP=60;
+var $=function(id){return document.getElementById(id);};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];});}
+function uid(){return Math.random().toString(36).slice(2,9);}
+function fmt(n,d){return (Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+function km(n){return n<10?fmt(n,1):String(Math.round(n));}
+
+/* ---------- data ---------- */
+function sampleState(){return {sample:true,set:{avg:5,max:15},points:[{id:uid(),t:Date.now()-20*HR,lat:20.82,lng:80.755}]};}
+function load(){
+  try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.points))return s;}catch(e){}
+  try{var seed=JSON.parse($("seed").textContent);if(seed&&Array.isArray(seed.points))return seed;}catch(e){}
+  return sampleState();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+var state=load();
+
+/* ---------- maths ---------- */
+function hav(a,b){var R=6371,r=Math.PI/180,dLa=(b.lat-a.lat)*r,dLo=(b.lng-a.lng)*r;var s=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLo/2)*Math.sin(dLo/2);return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));}
+function analyze(nowMs){
+  var S=state.points.slice().sort(function(a,b){return a.t-b.t;}),segs=[],i;
+  for(i=1;i<S.length;i++){var d=hav(S[i-1],S[i]),h=Math.max((S[i].t-S[i-1].t)/HR,6);segs.push({d:d,h:(S[i].t-S[i-1].t)/HR,speed:d/h*24});}
+  var good=segs.filter(function(s){return s.speed<=60;}),own=good.length>=3,avg=state.set.avg,max=state.set.max;
+  if(own){
+    var sp=good.map(function(s){return s.speed;}).sort(function(a,b){return a-b;});
+    var dsum=good.reduce(function(a,s){return a+s.d;},0),hsum=good.reduce(function(a,s){return a+Math.max(s.h,6);},0);
+    avg=dsum/hsum*24;max=Math.max(sp[Math.min(sp.length-1,Math.round(0.9*(sp.length-1)))],avg*1.5);
+  }
+  var last=S[S.length-1]||null,el=last?Math.max(0,(nowMs-last.t)/HR):0;
+  function reach(h){return {inner:Math.min(avg*h/24+FLOOR,CAP),outer:Math.min(max*h/24+FLOOR,CAP)};}
+  var r=reach(el);
+  return {S:S,segs:segs,own:own,avg:avg,max:max,last:last,el:el,inner:r.inner,outer:r.outer,reach:reach};
+}
+function dur(h){var d=Math.floor(h/24),r=Math.round(h-d*24);if(r===24){d++;r=0;}if(d<=0)return r<1?"abhi-abhi":r+" ghante";return d+" din"+(r?" "+r+" ghante":"");}
+function dt(ms){var d=new Date(ms);return d.toLocaleDateString("en-IN",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});}
+function localInput(ms){var d=new Date(ms),p=function(n){return String(n).padStart(2,"0");};return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes());}
+
+/* ---------- map engine ---------- */
+var canvas=$("map"),ctx=canvas.getContext("2d"),wrap=$("mapwrap");
+var cw=300,ch=300,dpr=1,view={lat:20.8,lng:80.75,z:11},layer="sat",TILE=256,tiles={},tilesOk={},dirty=true;
+var LAYERS={
+  sat:{url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"+z+"/"+y+"/"+x;},max:18,attr:"Imagery © Esri"},
+  street:{url:function(z,x,y){return "https://tile.openstreetmap.org/"+z+"/"+x+"/"+y+".png";},max:19,attr:"© OpenStreetMap contributors"}
+};
+function project(lat,lng,z){var s=TILE*Math.pow(2,z),sn=Math.sin(Math.max(-85,Math.min(85,lat))*Math.PI/180);return {x:(lng+180)/360*s,y:(0.5-Math.log((1+sn)/(1-sn))/(4*Math.PI))*s};}
+function unproject(x,y,z){var s=TILE*Math.pow(2,z),n=Math.PI-2*Math.PI*y/s;return {lat:180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))),lng:x/s*360-180};}
+function toScreen(lat,lng){var c=project(view.lat,view.lng,view.z),p=project(lat,lng,view.z);return {x:p.x-c.x+cw/2,y:p.y-c.y+ch/2};}
+function toLL(sx,sy){var c=project(view.lat,view.lng,view.z);return unproject(c.x+sx-cw/2,c.y+sy-ch/2,view.z);}
+function kmPx(k,lat){return k*1000/(156543.03392*Math.cos(lat*Math.PI/180)/Math.pow(2,view.z));}
+function resize(){var r=wrap.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);cw=Math.max(1,r.width);ch=Math.max(1,r.height);canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);var f=$("fly");f.width=canvas.width;f.height=canvas.height;dirty=true;}
+var colors={};
+function readColors(){var cs=getComputedStyle(document.documentElement);["map-bg","map-grid","map-ink","inner","outer","accent","route","surface","ink"].forEach(function(k){colors[k]=cs.getPropertyValue("--"+k).trim()||"#888";});dirty=true;}
+function rgba(hex,a){var h=hex.replace("#","");if(h.length===3)h=h.split("").map(function(c){return c+c;}).join("");var n=parseInt(h,16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")";}
+var FONT="Noto Sans, system-ui, sans-serif";
+function getTile(z,x,y){
+  var k=layer+"/"+z+"/"+x+"/"+y,t=tiles[k],L=layer;
+  if(!t){t=tiles[k]={img:new Image(),ok:false};t.img.onload=function(){t.ok=true;tilesOk[L]=true;$("tilenote").hidden=true;dirty=true;};t.img.onerror=function(){dirty=true;};t.img.src=LAYERS[layer].url(z,x,y);}
+  return t;
+}
+function drawTiles(){
+  var L=LAYERS[layer],zi=Math.max(1,Math.min(L.max,Math.floor(view.z))),sc=Math.pow(2,view.z-zi),c=project(view.lat,view.lng,zi),n=Math.pow(2,zi),drew=false;
+  var x0=Math.floor((c.x-cw/2/sc)/TILE),x1=Math.floor((c.x+cw/2/sc)/TILE),y0=Math.max(0,Math.floor((c.y-ch/2/sc)/TILE)),y1=Math.min(n-1,Math.floor((c.y+ch/2/sc)/TILE));
+  for(var ty=y0;ty<=y1;ty++)for(var tx=x0;tx<=x1;tx++){var t=getTile(zi,((tx%n)+n)%n,ty);if(t.ok){ctx.drawImage(t.img,(tx*TILE-c.x)*sc+cw/2,(ty*TILE-c.y)*sc+ch/2,TILE*sc+0.5,TILE*sc+0.5);drew=true;}}
+  return drew;
+}
+function drawGrid(){
+  var tl=toLL(0,0),br=toLL(cw,ch),steps=[2,1,0.5,0.25,0.1,0.05,0.02,0.01,0.005],step=0.005;
+  for(var i=0;i<steps.length;i++){if(kmPx(steps[i]*111,view.lat)<120){step=i?steps[i-1]:steps[0];break;}}
+  var dec=step>=1?0:(step>=0.1?1:(step>=0.01?2:3));
+  ctx.save();ctx.strokeStyle=colors["map-grid"];ctx.lineWidth=1;ctx.fillStyle=colors["map-ink"];ctx.font="10px "+FONT;
+  for(var g=Math.ceil(tl.lng/step)*step;g<=br.lng;g+=step){var p=toScreen(view.lat,g);ctx.beginPath();ctx.moveTo(p.x,0);ctx.lineTo(p.x,ch);ctx.stroke();ctx.fillText(g.toFixed(dec)+"°E",p.x+3,ch-58);}
+  for(var a=Math.ceil(br.lat/step)*step;a<=tl.lat;a+=step){var q=toScreen(a,view.lng);ctx.beginPath();ctx.moveTo(0,q.y);ctx.lineTo(cw,q.y);ctx.stroke();ctx.fillText(a.toFixed(dec)+"°N",cw-56,q.y-3);}
+  ctx.restore();
+}
+function ring(ll,k,fill,stroke,lw,dash){var p=toScreen(ll.lat,ll.lng),r=kmPx(k,ll.lat);ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0,r),0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.setLineDash(dash||[]);ctx.strokeStyle=stroke;ctx.lineWidth=lw||2;ctx.stroke();ctx.setLineDash([]);}return {p:p,r:r};}
+function label(text,x,y,col){ctx.font="600 12px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";var w=ctx.measureText(text).width+12;ctx.fillStyle=col;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x-w/2,y-10,w,20,10);else ctx.rect(x-w/2,y-10,w,20);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(text,x,y+0.5);}
+function scaleBar(){var nice=[0.1,0.2,0.5,1,2,5,10,20,50,100],k=(cw*0.22)/kmPx(1,view.lat),v=nice[0];nice.forEach(function(n){if(n<=k)v=n;});var w=kmPx(v,view.lat),x=cw-w-14,y=ch-28;ctx.save();ctx.strokeStyle="#fff";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,y-6);ctx.lineTo(x,y);ctx.lineTo(x+w,y);ctx.lineTo(x+w,y-6);ctx.stroke();ctx.strokeStyle="#111";ctx.lineWidth=2;ctx.stroke();ctx.font="600 11px "+FONT;ctx.textAlign="center";ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.strokeText(v+" km",x+w/2,y-10);ctx.fillStyle="#111";ctx.fillText(v+" km",x+w/2,y-10);ctx.restore();}
+var A=null,pick=null,hits=[],grow=1,growT0=0,reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function draw(now){
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=colors["map-bg"];ctx.fillRect(0,0,cw,ch);
+  if(!drawTiles())drawGrid();
+  hits=[];
+  if(growT0){var g=Math.min(1,(now-growT0)/1100);grow=1-Math.pow(1-g,3);if(g>=1)growT0=0;}
+  if(A&&A.last){
+    var L=A.last;
+    var o=ring(L,A.outer*grow,rgba(colors.outer,0.16),colors.outer,3);
+    var n=ring(L,A.inner*grow,rgba(colors.inner,0.28),colors.inner,3);
+    if(!reduce&&grow===1){var ph=(now%2400)/2400;ring(L,A.outer*ph,null,rgba(colors.outer,0.9*(1-ph)),3);}
+    if(A.S.length>1){ctx.beginPath();A.S.forEach(function(p,i){var s=toScreen(p.lat,p.lng);i?ctx.lineTo(s.x,s.y):ctx.moveTo(s.x,s.y);});ctx.lineWidth=5;ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineCap="round";ctx.stroke();ctx.lineWidth=2.5;ctx.strokeStyle="#17251C";ctx.setLineDash([3,6]);ctx.stroke();ctx.setLineDash([]);}
+    A.S.forEach(function(p,i){if(i===A.S.length-1)return;var s=toScreen(p.lat,p.lng);ctx.beginPath();ctx.arc(s.x,s.y,9,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#17251C";ctx.stroke();ctx.fillStyle="#17251C";ctx.font="600 10px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(i+1),s.x,s.y+0.5);hits.push({x:s.x,y:s.y,p:p,i:i});});
+    if(grow===1){
+      if(o.r>40)label(km(A.outer)+" km tak",o.p.x,o.p.y-o.r,colors.outer);
+      if(n.r>40&&o.r-n.r>22)label(km(A.inner)+" km",n.p.x,n.p.y-n.r,"#9A6A00");
+    }
+    var s=toScreen(L.lat,L.lng),pu=reduce?0:(now%1200)/1200;
+    if(!reduce){ctx.beginPath();ctx.arc(s.x,s.y,11+14*pu,0,Math.PI*2);ctx.fillStyle=rgba(colors.outer,0.4*(1-pu));ctx.fill();}
+    ctx.beginPath();ctx.arc(s.x,s.y,11,0,Math.PI*2);ctx.fillStyle=colors.outer;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.stroke();
+    hits.push({x:s.x,y:s.y,p:L,i:A.S.length-1});
+  }
+  if(pick){var q=toScreen(pick.lat,pick.lng);ctx.strokeStyle="#fff";ctx.lineWidth=5;ctx.beginPath();ctx.arc(q.x,q.y,13,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=colors.accent;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(q.x-8,q.y);ctx.lineTo(q.x+8,q.y);ctx.moveTo(q.x,q.y-8);ctx.lineTo(q.x,q.y+8);ctx.stroke();}
+  scaleBar();
+}
+function loop(now){if(!reduce||dirty||growT0){draw(now);dirty=false;}if(flying)flyFrame(now);requestAnimationFrame(loop);}
+function zoomAt(sx,sy,nz){nz=Math.max(3,Math.min(18.5,nz));var ll=toLL(sx,sy),p=project(ll.lat,ll.lng,nz),c=unproject(p.x-(sx-cw/2),p.y-(sy-ch/2),nz);view={lat:c.lat,lng:c.lng,z:nz};dirty=true;$("info").hidden=true;}
+function fit(){
+  if(!A||!A.last)return;var pts=A.S.slice(),L=A.last,r=Math.max(A.outer,1.5),dl=r/110.574,dg=r/(111.32*Math.cos(L.lat*Math.PI/180));
+  pts.push({lat:L.lat+dl,lng:L.lng+dg},{lat:L.lat-dl,lng:L.lng-dg});
+  var la=pts.map(function(p){return p.lat;}),lo=pts.map(function(p){return p.lng;}),N=Math.max.apply(null,la),S=Math.min.apply(null,la),E=Math.max.apply(null,lo),W=Math.min.apply(null,lo),z=17;
+  for(;z>3;z-=0.25){var a=project(N,W,z),b=project(S,E,z);if(b.x-a.x<=cw-60&&b.y-a.y<=ch-130)break;}
+  var a2=project(N,W,z),b2=project(S,E,z),m=unproject((a2.x+b2.x)/2,(a2.y+b2.y)/2,z);view={lat:m.lat,lng:m.lng,z:z};dirty=true;
+}
+var ptr={},gest=null;
+canvas.addEventListener("pointerdown",function(e){canvas.setPointerCapture(e.pointerId);ptr[e.pointerId]={x:e.offsetX,y:e.offsetY};var ids=Object.keys(ptr);
+  if(ids.length===1)gest={type:"pan",lx:e.offsetX,ly:e.offsetY,moved:0,t:Date.now()};
+  else if(ids.length===2){var a=ptr[ids[0]],b=ptr[ids[1]];gest={type:"pinch",d:Math.hypot(a.x-b.x,a.y-b.y),z:view.z,moved:99};}});
+canvas.addEventListener("pointermove",function(e){if(!ptr[e.pointerId]||!gest)return;ptr[e.pointerId]={x:e.offsetX,y:e.offsetY};
+  if(gest.type==="pan"){var dx=e.offsetX-gest.lx,dy=e.offsetY-gest.ly;gest.lx=e.offsetX;gest.ly=e.offsetY;gest.moved+=Math.abs(dx)+Math.abs(dy);var c=project(view.lat,view.lng,view.z),n=unproject(c.x-dx,c.y-dy,view.z);view.lat=n.lat;view.lng=n.lng;dirty=true;if(gest.moved>6)$("info").hidden=true;}
+  else{var ids=Object.keys(ptr);if(ids.length<2)return;var a=ptr[ids[0]],b=ptr[ids[1]];zoomAt((a.x+b.x)/2,(a.y+b.y)/2,gest.z+Math.log2(Math.hypot(a.x-b.x,a.y-b.y)/gest.d));}});
+function endPtr(e){if(!ptr[e.pointerId])return;delete ptr[e.pointerId];if(gest&&gest.type==="pan"&&gest.moved<6&&Date.now()-gest.t<600)tap(e.offsetX,e.offsetY);
+  if(!Object.keys(ptr).length)gest=null;else if(gest&&gest.type==="pinch"){var id=Object.keys(ptr)[0];gest={type:"pan",lx:ptr[id].x,ly:ptr[id].y,moved:99,t:0};}}
+canvas.addEventListener("pointerup",endPtr);canvas.addEventListener("pointercancel",endPtr);
+canvas.addEventListener("wheel",function(e){e.preventDefault();zoomAt(e.offsetX,e.offsetY,view.z-e.deltaY*0.0022);},{passive:false});
+$("zin").onclick=function(){zoomAt(cw/2,ch/2,view.z+1);};
+$("zout").onclick=function(){zoomAt(cw/2,ch/2,view.z-1);};
+$("zfit").onclick=fit;
+function tap(x,y){
+  var best=null;hits.forEach(function(h){var d=Math.hypot(h.x-x,h.y-y);if(d<16&&(!best||d<best.d))best={h:h,d:d};});
+  var info=$("info");
+  if(best){var h=best.h,last=h.i===A.S.length-1;info.innerHTML="<b>"+(last?"Last location":"Location "+(h.i+1))+"</b><br>"+esc(dt(h.p.t))+"<br><span class=mono>"+fmt(h.p.lat,4)+", "+fmt(h.p.lng,4)+"</span>";info.hidden=false;
+    var w=info.offsetWidth,hh=info.offsetHeight;info.style.left=Math.max(6,Math.min(cw-w-6,x-w/2))+"px";info.style.top=(y-hh-16<50?y+16:y-hh-16)+"px";return;}
+  info.hidden=true;var ll=toLL(x,y);pick=ll;dirty=true;$("qLat").value=fmt(ll.lat,5);$("qLng").value=fmt(ll.lng,5);$("eLat").textContent="";$("eLng").textContent="";
+  toast("Location bhar di. Ab \"Pata karo\" dabao.");
+}
+document.querySelectorAll(".seg button").forEach(function(b){b.onclick=function(){layer=b.dataset.layer;document.querySelectorAll(".seg button").forEach(function(o){o.setAttribute("aria-pressed",String(o===b));});$("attr").textContent=LAYERS[layer].attr;dirty=true;checkTiles();};});
+var noteClosed=false;$("tilenoteX").onclick=function(){noteClosed=true;$("tilenote").hidden=true;};
+function checkTiles(){var L=layer;setTimeout(function(){if(!tilesOk[L]&&layer===L&&!noteClosed&&!flying)$("tilenote").hidden=false;},4000);}
+
+/* ---------- space to earth fly-in ---------- */
+var fly=$("fly"),fctx=fly.getContext("2d"),flying=false,flyT0=0,flyTarget=null,flyDone=null,stars=[];
+for(var si=0;si<160;si++)stars.push({x:Math.random(),y:Math.random(),r:Math.random()*1.3+0.3,p:Math.random()*6});
+var LAND=[
+ [[70,60],[73,80],[76,100],[73,130],[68,170],[62,165],[55,160],[45,142],[38,140],[31,122],[22,114],[10,106],[1,104],[8,98],[16,97],[22,92],[27,92],[28,88],[30,81],[35,74],[30,66],[25,62],[25,57],[22,59],[17,55],[13,45],[20,40],[28,35],[37,36],[42,28],[45,40],[48,50],[55,55],[62,58]],
+ [[37,10],[32,32],[22,37],[12,44],[11,51],[0,42],[-10,40],[-25,35],[-34,26],[-34,18],[-17,12],[-6,12],[4,9],[5,-4],[5,-8],[10,-15],[15,-17],[21,-17],[28,-12],[35,-6]],
+ [[36,-9],[43,-9],[48,-4],[51,2],[54,8],[57,10],[59,5],[63,9],[70,20],[70,30],[65,40],[55,40],[45,40],[42,28],[40,20],[38,15],[44,12],[43,4],[40,0]],
+ [[-11,132],[-12,137],[-17,141],[-11,142],[-19,147],[-25,153],[-33,152],[-38,147],[-38,140],[-35,137],[-32,132],[-34,123],[-34,115],[-22,114],[-20,119],[-14,126]],
+ [[-6,95],[-6,106],[-8,114],[-9,124],[-4,120],[1,119],[2,110],[5,100]]
+];
+var INDIA=[[35.5,74],[34,78.5],[30.5,81],[28,88],[27,92],[28.2,97],[24,94],[22,92.5],[21.5,89],[22,88],[20,86.5],[17.5,83],[15.5,80.3],[13,80.3],[10.3,79.8],[8.1,77.5],[9,76.3],[12,75],[15,73.8],[19,72.8],[21,72.6],[22.5,70],[23.5,68.5],[25,70.5],[27.5,70],[29.5,71.5],[32.5,74.5]];
+function ease(t){t=Math.max(0,Math.min(1,t));return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function ortho(lat,lng,lat0,lng0,R,cx,cy){var r=Math.PI/180,p=lat*r,l=lng*r,p0=lat0*r,l0=lng0*r,cosc=Math.sin(p0)*Math.sin(p)+Math.cos(p0)*Math.cos(p)*Math.cos(l-l0);var x=Math.cos(p)*Math.sin(l-l0),y=Math.cos(p0)*Math.sin(p)-Math.sin(p0)*Math.cos(p)*Math.cos(l-l0);if(cosc<0){var m=Math.hypot(x,y)||1;x/=m;y/=m;}return {x:cx+R*x,y:cy-R*y,v:cosc>=0};}
+function poly(pts,lat0,lng0,R,cx,cy){fctx.beginPath();pts.forEach(function(q,i){var s=ortho(q[0],q[1],lat0,lng0,R,cx,cy);i?fctx.lineTo(s.x,s.y):fctx.moveTo(s.x,s.y);});fctx.closePath();}
+function startFly(target,done){
+  flyTarget=target;flyDone=done;
+  if(reduce){done();return;}
+  fly.hidden=false;$("skipFly").hidden=false;$("tilenote").hidden=true;flying=true;flyT0=performance.now();
+}
+function endFly(){if(!flying)return;flying=false;fly.hidden=true;$("skipFly").hidden=true;var d=flyDone;flyDone=null;if(d)d();}
+$("skipFly").onclick=endFly;
+function flyFrame(now){
+  var t=(now-flyT0)/1000,W=cw,H=ch,cx=W/2,cy=H/2,R0=Math.min(W,H)*0.3,T=flyTarget;
+  fctx.setTransform(dpr,0,0,dpr,0,0);
+  var alpha=t>3.3?Math.max(0,1-(t-3.3)/0.6):1;
+  fctx.clearRect(0,0,W,H);fctx.globalAlpha=alpha;
+  fctx.fillStyle="#04070D";fctx.fillRect(0,0,W,H);
+  stars.forEach(function(s){fctx.globalAlpha=alpha*(0.5+0.5*Math.sin(t*2+s.p));fctx.fillStyle="#fff";fctx.fillRect(s.x*W,s.y*H,s.r,s.r);});
+  fctx.globalAlpha=alpha;
+  var k1=ease(t/1.9),lng0=T.lng-120*(1-k1),lat0=T.lat*k1,R=R0;
+  if(t>2.5)R=R0*Math.pow(70,ease((t-2.5)/1.3));
+  var halo=fctx.createRadialGradient(cx,cy,R*0.95,cx,cy,R*1.12);halo.addColorStop(0,"rgba(90,170,255,.55)");halo.addColorStop(1,"rgba(90,170,255,0)");fctx.fillStyle=halo;fctx.beginPath();fctx.arc(cx,cy,R*1.12,0,Math.PI*2);fctx.fill();
+  var sea=fctx.createRadialGradient(cx-R*0.35,cy-R*0.35,R*0.1,cx,cy,R);sea.addColorStop(0,"#2B6FB5");sea.addColorStop(1,"#0A2347");fctx.fillStyle=sea;fctx.beginPath();fctx.arc(cx,cy,R,0,Math.PI*2);fctx.fill();
+  fctx.save();fctx.beginPath();fctx.arc(cx,cy,R,0,Math.PI*2);fctx.clip();
+  fctx.strokeStyle="rgba(255,255,255,.12)";fctx.lineWidth=1;
+  for(var gl=-75;gl<=75;gl+=15){fctx.beginPath();for(var gg=-180;gg<=180;gg+=6){var s=ortho(gl,gg,lat0,lng0,R,cx,cy);if(!s.v){fctx.moveTo(s.x,s.y);continue;}fctx.lineTo(s.x,s.y);}fctx.stroke();}
+  for(var mg=-180;mg<180;mg+=15){fctx.beginPath();for(var ma=-85;ma<=85;ma+=5){var s2=ortho(ma,mg,lat0,lng0,R,cx,cy);if(!s2.v){fctx.moveTo(s2.x,s2.y);continue;}fctx.lineTo(s2.x,s2.y);}fctx.stroke();}
+  LAND.forEach(function(p){poly(p,lat0,lng0,R,cx,cy);fctx.fillStyle="#3F7A3C";fctx.fill();});
+  poly(INDIA,lat0,lng0,R,cx,cy);fctx.fillStyle="#5E9A4E";fctx.fill();fctx.lineWidth=1.5;fctx.strokeStyle="rgba(240,149,58,.9)";fctx.stroke();
+  var shade=fctx.createRadialGradient(cx-R*0.4,cy-R*0.4,R*0.2,cx,cy,R*1.05);shade.addColorStop(0,"rgba(255,255,255,.08)");shade.addColorStop(1,"rgba(0,0,0,.45)");fctx.fillStyle=shade;fctx.fillRect(cx-R,cy-R,2*R,2*R);
+  fctx.restore();
+  var tp=ortho(T.lat,T.lng,lat0,lng0,R,cx,cy);
+  if(tp.v){var pu=(t*1.6)%1;fctx.beginPath();fctx.arc(tp.x,tp.y,5+16*pu,0,Math.PI*2);fctx.strokeStyle="rgba(255,90,70,"+(1-pu)+")";fctx.lineWidth=2;fctx.stroke();fctx.beginPath();fctx.arc(tp.x,tp.y,5,0,Math.PI*2);fctx.fillStyle="#FF5A46";fctx.fill();}
+  var satA=Math.PI*(1.05+0.62*ease(t/2.1)),sx=cx+R0*1.45*Math.cos(satA),sy=cy+R0*1.25*Math.sin(satA),satAlpha=t>2.6?Math.max(0,1-(t-2.6)/0.5):1;
+  if(t>1.9&&t<2.9&&tp.v){var bp=0.18+0.12*Math.sin(t*14);fctx.globalAlpha=alpha*satAlpha;fctx.beginPath();fctx.moveTo(sx,sy);fctx.lineTo(tp.x-22,tp.y);fctx.lineTo(tp.x+22,tp.y);fctx.closePath();fctx.fillStyle="rgba(255,196,90,"+bp+")";fctx.fill();var sc=((t-1.9)*1.5)%1;fctx.strokeStyle="rgba(255,210,120,.8)";fctx.beginPath();fctx.moveTo(sx+(tp.x-22-sx)*sc,sy+(tp.y-sy)*sc);fctx.lineTo(sx+(tp.x+22-sx)*sc,sy+(tp.y-sy)*sc);fctx.stroke();}
+  fctx.globalAlpha=alpha*satAlpha;
+  fctx.save();fctx.translate(sx,sy);fctx.rotate(satA+Math.PI/2);fctx.fillStyle="#D9DEE6";fctx.fillRect(-6,-5,12,10);fctx.fillStyle="#2F5FA8";fctx.fillRect(-26,-3.5,17,7);fctx.fillRect(9,-3.5,17,7);fctx.strokeStyle="#9DB5DA";fctx.lineWidth=0.8;fctx.strokeRect(-26,-3.5,17,7);fctx.strokeRect(9,-3.5,17,7);fctx.fillStyle="#F0953A";fctx.fillRect(-2,5,4,3);fctx.restore();
+  fctx.globalAlpha=alpha;
+  var cl=T.lat*Math.min(1,t/1.9),cg=(T.lng-120)+120*Math.min(1,t/1.9);
+  fctx.font="500 12px JetBrains Mono, monospace";fctx.fillStyle="rgba(180,220,255,.9)";fctx.textAlign="left";fctx.textBaseline="top";
+  fctx.fillText("SATELLITE VIEW",14,60);
+  fctx.fillText((t<1.9?"SCANNING ":"TARGET LOCK ")+cl.toFixed(4)+"°N  "+cg.toFixed(4)+"°E",14,78);
+  if(t>2.5)fctx.fillText("ZOOM x"+Math.round(Math.pow(70,ease((t-2.5)/1.3))),14,96);
+  fctx.globalAlpha=1;
+  if(t>3.9)endFly();
+}
+
+/* ---------- sound ---------- */
+var actx=null,soundOn=true;
+function audio(){if(!actx){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;actx=new C();}if(actx.state==="suspended")actx.resume();return actx;}
+function beep(f,d,delay){var a=audio();if(!a)return;var t=a.currentTime+(delay||0),o=a.createOscillator(),g=a.createGain();o.type="square";o.frequency.value=f;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.14,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+0.03);}
+function titi(){if(!soundOn)return;beep(1175,0.1,0);beep(1175,0.1,0.16);beep(1568,0.18,0.32);}
+function scanSound(){if(!soundOn)return;for(var i=0;i<6;i++)beep(660+i*60,0.05,i*0.3);}
+$("soundBtn").onclick=function(){soundOn=!soundOn;this.setAttribute("aria-pressed",String(soundOn));this.textContent="Awaaz: "+(soundOn?"On":"Off");if(soundOn){audio();beep(880,0.1,0);}};
+
+/* ---------- render ---------- */
+function render(){
+  A=analyze(Date.now());dirty=true;
+  $("sampleNote").hidden=!state.sample;
+  var hl=$("headline"),sub=$("subline");
+  if(!A.last){hl.textContent="Pehle location daalo";sub.textContent="";$("ahead").innerHTML="";}
+  else{
+    hl.innerHTML="Tiger lagbhag <span class=\"in\">"+km(A.inner)+" km</span> ke andar hoga";
+    sub.innerHTML="Zyada se zyada <b>"+km(A.outer)+" km</b> tak ja sakta hai. Last dekha: "+esc(dt(A.last.t))+" ("+dur(A.el)+" pehle).";
+    var steps=[[6,"6 ghante baad"],[12,"12 ghante baad"],[24,"1 din baad"],[48,"2 din baad"]];
+    $("ahead").innerHTML=steps.map(function(s){var r=A.reach(A.el+s[0]);return "<div><span>"+s[1]+"</span><b>"+km(r.inner)+"–"+km(r.outer)+" km</b></div>";}).join("");
+    var la=fmt(A.last.lat,5),lo=fmt(A.last.lng,5);
+    $("earthLink").href="https://earth.google.com/web/@"+la+","+lo+",300a,"+Math.round(Math.max(A.outer,2)*2600)+"d,35y,0h,0t,0r";
+    $("gmapLink").href="https://www.google.com/maps/@"+la+","+lo+","+(A.outer>15?11:12)+"z/data=!3m1!1e3";
+  }
+  $("histCount").textContent=A.S.length;
+  $("hist").innerHTML=A.S.map(function(p,i){return {i:i,h:"<li"+(i===A.S.length-1?" class=\"last\"":"")+"><span class=\"num\">"+(i+1)+"</span><span>"+esc(dt(p.t))+"<small class=\"mono\">"+fmt(p.lat,4)+", "+fmt(p.lng,4)+"</small></span><button type=\"button\" class=\"x\" data-del=\""+esc(p.id)+"\">Hatao</button></li>"};}).reverse().map(function(r){return r.h;}).join("")||"<li style=\"grid-template-columns:1fr\">Koi location nahi.</li>";
+  ["avg","max"].forEach(function(k){var el=$("set"+(k==="avg"?"Avg":"Max"));if(document.activeElement!==el)el.value=state.set[k];});
+}
+
+/* ---------- form ---------- */
+var whenH=0;
+document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){document.querySelectorAll(".chip").forEach(function(o){o.setAttribute("aria-pressed",String(o===c));});whenH=c.dataset.h;$("customWhen").hidden=whenH!=="custom";if(whenH==="custom"&&!$("customWhen").value)$("customWhen").value=localInput(Date.now()-24*HR);$("eWhen").textContent="";};});
+["qLat","qLng"].forEach(function(id){$(id).addEventListener("input",function(){$(id==="qLat"?"eLat":"eLng").textContent="";});});
+function parseNum(id,min,max,err,name){var raw=String($(id).value).trim().replace(",","."),v=parseFloat(raw);if(!raw||isNaN(v)||v<min||v>max){$(err).textContent=name+" "+min+" se "+max+" ke beech likho";return null;}return v;}
+$("qForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  var lat=parseNum("qLat",-90,90,"eLat","Latitude"),lng=parseNum("qLng",-180,180,"eLng","Longitude"),t;
+  if(whenH==="custom"){t=new Date($("customWhen").value).getTime();if(isNaN(t)){$("eWhen").textContent="Date aur time chuno";return;}if(t>Date.now()+HR){$("eWhen").textContent="Aage ki date nahi chal sakti";return;}}
+  else t=Date.now()-(+whenH)*HR;
+  if(lat===null||lng===null)return;
+  if(state.sample){state.points=[];state.sample=false;}
+  state.points.push({id:uid(),t:t,lat:lat,lng:lng});save();pick=null;
+  audio();scanSound();
+  showResult(true);
+  $("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});
+});
+function showResult(animate){
+  render();fit();grow=0;
+  var T=A.last;
+  if(animate)startFly({lat:T.lat,lng:T.lng},function(){growT0=performance.now();titi();checkTiles();});
+  else{grow=1;}
+}
+$("replay").onclick=function(){if(A&&A.last){audio();scanSound();showResult(true);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}};
+["setAvg","setMax"].forEach(function(id){$(id).addEventListener("change",function(){var v=parseFloat(this.value);if(isNaN(v)||v<=0){render();return;}state.set[id==="setAvg"?"avg":"max"]=v;if(state.set.max<state.set.avg)state.set.max=state.set.avg;save();render();});});
+function armed(b,fn){if(b.dataset.armed){fn();return;}var old=b.textContent;b.dataset.armed="1";b.textContent="Pakka? Dobara dabao";setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.textContent=old;}},3000);}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;armed(b,function(){state.points=state.points.filter(function(p){return p.id!==b.dataset.del;});state.sample=false;save();render();});});
+$("clearBtn").onclick=function(){armed(this,function(){state.points=[];state.sample=false;save();render();toast("Saaf ho gaya. Nayi location daalo.");});};
+$("dlBtn").onclick=async function(){
+  var clone=document.documentElement.cloneNode(true);
+  clone.querySelectorAll("script").forEach(function(s){if(s.id!=="seed"&&s.id!=="app-js")s.remove();});
+  var sd=clone.querySelector("#seed");if(sd)sd.textContent=JSON.stringify(state);
+  ["#info","#toast"].forEach(function(q){var n=clone.querySelector(q);if(n&&q==="#toast")n.remove();});
+  var html="<!doctype html>\n"+clone.outerHTML;
+  try{if(window.claude&&window.claude.use){var d=await window.claude.use("downloads");if(d){await d.save({filename:"tiger-zone-tracker.html",data:new Blob([html],{type:"text/html"})});toast("File save ho gayi. Chrome mein kholo, satellite chalega.");return;}}}catch(err){if(err&&err.code==="declined")return;}
+  try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="tiger-zone-tracker.html";document.body.appendChild(a);a.click();a.remove();}catch(err){toast("Download is jagah nahi chala");}
+};
+var tt;function toast(m){var el=$("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";el.setAttribute("role","status");document.body.appendChild(el);}el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(function(){el.hidden=true;},2600);}
+
+/* ---------- boot ---------- */
+readColors();
+if(window.matchMedia)window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",readColors);
+new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+if(window.ResizeObserver)new ResizeObserver(resize).observe(wrap);else window.addEventListener("resize",resize);
+resize();$("attr").textContent=LAYERS[layer].attr;
+if(state.sample){$("qLat").value="20.82000";$("qLng").value="80.75500";}
+render();fit();
+showResult(true);
+setInterval(function(){if(!flying){render();}},60000);
+requestAnimationFrame(loop);
+window.__tz={A:function(){return A;},state:function(){return state;}};
+})();
+</script>
+</body>
+</html>
