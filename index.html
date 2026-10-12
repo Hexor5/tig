@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="Shubham (hexorhexor66@gmail.com)">
 <title>Tiger Zone Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,7 +95,7 @@ td .km-out{color:var(--outer);font-weight:700}
 .view{font-size:.8rem;color:var(--accent);font-weight:700;white-space:nowrap}
 .mapcard{padding:14px}
 .mapwrap{position:relative;height:min(64vh,560px);min-height:360px;background:var(--map-bg);border-radius:18px;overflow:hidden;box-shadow:var(--press)}
-#map,#mapplsMap{position:absolute;inset:0;width:100%;height:100%}
+#map{position:absolute;inset:0;width:100%;height:100%}
 #map{display:block;touch-action:none;cursor:grab}
 #fly{position:absolute;inset:0;width:100%;height:100%;z-index:5}
 #skipFly{position:absolute;right:12px;bottom:12px;z-index:6;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;border-radius:10px;padding:6px 12px;font-size:.85rem}
@@ -107,9 +108,9 @@ td .km-out{color:var(--outer);font-weight:700}
 .zoom button{border:0;background:transparent;width:38px;height:38px;border-radius:10px;font-size:1.2rem}
 .zoom button:active{box-shadow:var(--press)}
 .maptag{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:3;background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:.85rem;font-weight:700;box-shadow:var(--raise-sm);white-space:nowrap}
-.legend{position:absolute;left:10px;bottom:10px;z-index:3;background:var(--bg);border-radius:12px;padding:8px 11px;font-size:.78rem;display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center;box-shadow:var(--raise-sm)}
+.legend{position:absolute;left:10px;bottom:26px;z-index:3;background:var(--bg);border-radius:12px;padding:8px 11px;font-size:.78rem;display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center;box-shadow:var(--raise-sm)}
 .sw{width:16px;height:12px;border-radius:3px;display:inline-block}
-.attr{position:absolute;right:6px;bottom:4px;font-size:.66rem;color:var(--map-ink);background:var(--bg);padding:0 5px;border-radius:4px;opacity:.85;z-index:2}
+.attr{position:absolute;right:6px;bottom:4px;max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.66rem;color:var(--map-ink);background:var(--bg);padding:0 5px;border-radius:4px;opacity:.85;z-index:2}
 .mapnote{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:min(92%,440px);background:var(--bg);border-radius:14px;padding:10px 12px;font-size:.82rem;color:var(--muted);display:flex;gap:8px;align-items:flex-start;z-index:4;box-shadow:var(--raise-sm)}
 .mapnote button{border:0;background:transparent;color:var(--muted);font-size:1.1rem;line-height:1}
 .info{position:absolute;z-index:4;max-width:240px;background:var(--bg);border-radius:12px;padding:9px 11px;font-size:.82rem;box-shadow:var(--raise-sm);pointer-events:none}
@@ -134,8 +135,12 @@ details.card[open]>summary{margin-bottom:14px}
 .status.good{color:var(--ok)} .status.bad{color:var(--outer)}
 .foot{font-size:.82rem;color:var(--muted);text-align:center}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:.9rem;z-index:20}
-.mp-pin{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #1E2B23;color:#1E2B23;font:700 11px/20px "Noto Sans",sans-serif;text-align:center}
-.mp-pin.last{background:#C23B27;border-color:#fff;color:#fff;width:26px;height:26px;line-height:22px}
+.credit{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 14px;margin:16px 4px 4px;padding:12px 14px;border-radius:14px;box-shadow:var(--press);font-size:.88rem;color:var(--muted);text-align:center}
+.credit [data-i=credit]{color:var(--ink);font-weight:700}
+.credit b{color:var(--accent);font-family:var(--font-mono);font-weight:500;user-select:all;overflow-wrap:anywhere}
+.btn.sm{padding:6px 12px;font-size:.82rem}
+.oldbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:14px;font-size:.85rem;color:var(--muted);padding-left:4px}
+.coord{position:absolute;right:10px;bottom:46px;z-index:3;background:var(--bg);border-radius:10px;padding:4px 9px;font:500 .74rem var(--font-mono);color:var(--ink);box-shadow:var(--raise-sm)}
 @media (max-width:520px){.card{padding:18px;border-radius:20px}.app{gap:22px}}
 @media (max-width:560px){table{min-width:0}th:nth-child(2),td:nth-child(2),th:nth-child(5),td:nth-child(5){display:none}td .d-m{display:block}th,td{padding-left:10px;padding-right:10px}th.r,td.r{white-space:nowrap}tbody tr td:nth-child(4){border-radius:0 12px 12px 0}tbody tr.sel td:nth-child(4){box-shadow:-2px 0 0 0 var(--accent) inset,0 2px 0 0 var(--accent) inset,0 -2px 0 0 var(--accent) inset}}
 </style>
@@ -178,6 +183,7 @@ details.card[open]>summary{margin-bottom:14px}
       <p class="tip" data-i="tip"></p>
     </form>
     <div class="samplenote" id="sampleNote" data-i="sample"></div>
+    <div class="oldbar"><span data-i="oldTxt"></span><button type="button" class="btn danger sm" id="clearOld" data-i="clearOld"></button></div>
   </section>
 
   <section class="card result" aria-live="polite">
@@ -201,13 +207,11 @@ details.card[open]>summary{margin-bottom:14px}
   <section class="card mapcard">
     <h2 style="padding:4px 6px 12px"><span class="step">3</span><span data-i="s3"></span></h2>
     <div class="mapwrap" id="mapwrap">
-      <div id="mapplsMap" hidden></div>
-      <canvas id="map" data-ia="s3"></canvas>
+            <canvas id="map" data-ia="s3"></canvas>
       <canvas id="fly" hidden aria-hidden="true"></canvas>
       <button type="button" id="skipFly" hidden data-i="skip"></button>
       <div class="mtop">
         <div class="seg" role="group" data-ia="mapType">
-          <button type="button" data-layer="mappls" aria-pressed="false">Mappls</button>
           <button type="button" data-layer="sat" aria-pressed="true" data-i="lSat"></button>
           <button type="button" data-layer="street" aria-pressed="false" data-i="lMap"></button>
         </div>
@@ -224,13 +228,19 @@ details.card[open]>summary{margin-bottom:14px}
       </div>
       <div class="info" id="info" hidden></div>
       <div class="attr" id="attr"></div>
+      <div class="coord" id="coord" aria-live="off"></div>
       <div class="mapnote" id="mapnote" hidden><span id="mapnoteText"></span><button type="button" id="mapnoteX" data-ia="close">×</button></div>
     </div>
     <div class="mapbar">
       <a class="btn hl" id="earthLink" href="#" target="_blank" rel="noopener" data-i="earth"></a>
-      <a class="btn" id="mapplsLink" href="#" target="_blank" rel="noopener" data-i="mapplsLink"></a>
+      <button type="button" class="btn" id="labelsBtn" aria-pressed="true"></button>
       <button type="button" class="btn" id="replay" data-i="replay"></button>
       <button type="button" class="btn" id="soundBtn" aria-pressed="true"></button>
+    </div>
+    <div class="credit">
+      <span data-i="credit"></span>
+      <span class="mail"><span data-i="contact"></span> <b id="mailTxt">hexorhexor66@gmail.com</b></span>
+      <button type="button" class="btn sm" id="copyMail" data-i="copy"></button>
     </div>
   </section>
 
@@ -251,34 +261,24 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="f"><label for="setMax" data-i="max"></label><input type="number" id="setMax" min="0.5" step="0.5"></div>
     </div>
     <p class="note" data-i="speedNote"></p>
-    <form id="keyForm" novalidate style="margin-top:18px">
-      <div class="f"><label for="mpKey">Mappls (MapmyIndia) API key</label><input type="password" id="mpKey" autocomplete="off" data-ip="keyPh"></div>
-      <div class="mapbar" style="padding:12px 0 0">
-        <button type="submit" class="btn hl" data-i="keySave"></button>
-        <button type="button" class="btn" id="keyShow" data-i="keyShow"></button>
-        <button type="button" class="btn danger" id="keyClear" data-i="keyClear"></button>
-      </div>
-      <div class="status" id="keyStatus"></div>
-      <p class="note" data-i="keyNote"></p>
-    </form>
   </details>
 
-  <p class="foot" data-i="foot"></p>
+  <p class="foot"><span data-i="foot"></span><br><span data-i="credit"></span> · hexorhexor66@gmail.com</p>
 </div>
 
 <script id="seed" type="application/json">null</script>
 <script id="app-js">
 (function(){
 "use strict";
-var HR=3600e3, KEY="tigerZoneSimple.v1", KKEY="tigerZoneMapplsKey", FLOOR=0.5, CAP=60;
+var HR=3600e3, KEY="tigerZoneSimple.v1", FLOOR=0.5, CAP=60;
 var $=function(id){return document.getElementById(id);};
 var I18N={
-hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",mapplsLink:"Mappls वेबसाइट पर खोलें",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड, Mappls key)",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",keyPh:"Static key यहाँ पेस्ट करें",keySave:"Key सेव करें",keyShow:"दिखाएँ",keyHide:"छुपाएँ",keyClear:"Key हटाएँ",keyNote:"Key मुफ़्त मिलती है: about.mappls.com/api पर अकाउंट बनाएँ → Console → \"Static Key\" कॉपी करें। Key सिर्फ़ इसी ब्राउज़र में सेव होती है।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
+hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड)",labelsOn:"नाम / सड़कें: चालू",labelsOff:"नाम / सड़कें: बंद",credit:"सॉफ़्टवेयर डेवलप किया: शुभम",contact:"संपर्क:",copy:"ईमेल कॉपी करें",copied:"ईमेल कॉपी हो गया",selected:"ईमेल चुना हुआ है, कॉपी कर लें",oldTxt:"पहले से सेव लोकेशन हटानी हैं?",clearOld:"पुराना डेटा हटाएँ",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
 headline:"ज़्यादा से ज़्यादा <span class=\"out\">{km} कि.मी.</span> तक जा सकता है",subline:"आख़िरी बार देखा: {t} ({ago} पहले) · {ll}",noLoc:"पहले लोकेशन डालें",noLocRow:"पहले लोकेशन डालें।",hours:"घंटे",days:"दिन",justNow:"अभी-अभी",later:"बाद",since:"आख़िरी बार देखने से {d}",onMap:"मैप पर",onMapSel:"मैप पर ✓",zoneNow:"ज़ोन: अभी",zoneAt:"ज़ोन: {x} बाद",a0:"अभी",a6:"6 घंटे",a12:"12 घंटे",a24:"24 घंटे (1 दिन)",a48:"2 दिन",a72:"3 दिन",lastLoc:"आख़िरी लोकेशन",locN:"लोकेशन {n}",picked:"लोकेशन भर दी। अब \"पता करें\" दबाएँ।",errNum:"{name} {min} से {max} के बीच लिखें",latN:"अक्षांश",lngN:"देशांतर",errDate:"तारीख और समय चुनें",errFuture:"आगे की तारीख नहीं चल सकती",noHist:"कोई लोकेशन नहीं।",del:"हटाएँ",sure:"पक्का? दोबारा दबाएँ",cleared:"साफ़ हो गया। नई लोकेशन डालें।",saved:"फ़ाइल सेव हो गई।",dlFail:"यहाँ डाउनलोड नहीं हुआ",
-nTiles:"इस प्रीव्यू में बाहर की मैप फ़ोटो लोड नहीं होती। \"Google Earth\" बटन दबाएँ, या फ़ाइल / GitHub लिंक Chrome में खोलें।",nNoKey:"Mappls के लिए API key चाहिए। नीचे \"सेटिंग्स\" खोलें और key डालें।",kLoading:"Mappls लोड हो रहा है…",kOk:"Mappls चल रहा है।",kMapErr:"Mappls मैप नहीं बना: {m}",kFail:"Mappls लोड नहीं हुआ। Key सही है? Mappls Console में इस वेबसाइट का domain allow किया है? (Claude के प्रीव्यू में Mappls नहीं चलता, फ़ाइल या GitHub लिंक पर खोलें।)",kEmpty:"पहले key पेस्ट करें।",kChanged:"Key बदली है। पेज रीलोड करें, फिर Mappls दबाएँ।",kSaved:"Key सेव हो गई।",kRemoved:"Key हटा दी।",kHas:"Key सेव है।"},
-en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",mapplsLink:"Open in Mappls",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed, Mappls key)",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",keyPh:"Paste static key here",keySave:"Save key",keyShow:"Show",keyHide:"Hide",keyClear:"Remove key",keyNote:"The key is free: create an account at about.mappls.com/api → Console → copy the \"Static Key\". It is saved only in this browser.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
+nTiles:"इस प्रीव्यू में बाहर की मैप फ़ोटो लोड नहीं होती। \"Google Earth\" बटन दबाएँ, या फ़ाइल / GitHub लिंक Chrome में खोलें।"},
+en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed)",labelsOn:"Names / roads: On",labelsOff:"Names / roads: Off",credit:"Software developed by Shubham",contact:"Contact:",copy:"Copy email",copied:"Email copied",selected:"Email selected, copy it",oldTxt:"Remove previously saved locations?",clearOld:"Remove old data",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
 headline:"Can go at most <span class=\"out\">{km} km</span>",subline:"Last seen: {t} ({ago} ago) · {ll}",noLoc:"Enter a location first",noLocRow:"Enter a location first.",hours:"hours",days:"days",justNow:"just now",later:"from now",since:"since last seen: {d}",onMap:"On map",onMapSel:"On map ✓",zoneNow:"Zone: now",zoneAt:"Zone: in {x}",a0:"Now",a6:"6 hours",a12:"12 hours",a24:"24 hours (1 day)",a48:"2 days",a72:"3 days",lastLoc:"Last location",locN:"Location {n}",picked:"Location filled. Now press \"Find zone\".",errNum:"Enter {name} between {min} and {max}",latN:"latitude",lngN:"longitude",errDate:"Pick a date and time",errFuture:"Future dates are not allowed",noHist:"No locations.",del:"Remove",sure:"Sure? Press again",cleared:"Cleared. Enter a new location.",saved:"File saved.",dlFail:"Download didn't work here",
-nTiles:"Outside map images don't load in this preview. Press \"Google Earth\", or open the file / GitHub link in Chrome.",nNoKey:"Mappls needs an API key. Open \"Settings\" below and add it.",kLoading:"Loading Mappls…",kOk:"Mappls is running.",kMapErr:"Mappls map failed: {m}",kFail:"Mappls didn't load. Is the key correct, and is this website's domain allowed in the Mappls Console? (Mappls doesn't run inside Claude's preview; open the file or GitHub link.)",kEmpty:"Paste a key first.",kChanged:"Key changed. Reload the page, then press Mappls.",kSaved:"Key saved.",kRemoved:"Key removed.",kHas:"Key is saved."}
+nTiles:"Outside map images don't load in this preview. Press \"Google Earth\", or open the file / GitHub link in Chrome."}
 };
 var lang="hi";try{var _l=localStorage.getItem("tigerZoneLang");if(_l==="en"||_l==="hi")lang=_l;}catch(e){}
 function t(k,v){var s=(I18N[lang]&&I18N[lang][k])||I18N.hi[k]||k;if(v)Object.keys(v).forEach(function(n){s=s.split("{"+n+"}").join(v[n]);});return s;}
@@ -289,7 +289,7 @@ function applyStatic(){
   document.querySelectorAll("[data-ia]").forEach(function(el){el.setAttribute("aria-label",t(el.dataset.ia));});
   document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.lang===lang));});
   $("soundBtn").textContent=t(soundOn?"soundOn":"soundOff");
-  $("keyShow").textContent=t($("mpKey").type==="password"?"keyShow":"keyHide");
+  $("labelsBtn").textContent=t(labelsOn?"labelsOn":"labelsOff");$("labelsBtn").setAttribute("aria-pressed",String(labelsOn));
   var lt=AHEAD.filter(function(r){return r[0]===sel;})[0];$("maptag").textContent=sel?t("zoneAt",{x:t(lt[1])}):t("zoneNow");
 }
 
@@ -333,31 +333,47 @@ var AHEAD=[[0,"a0"],[6,"a6"],[12,"a12"],[24,"a24"],[48,"a48"],[72,"a72"]];
 var canvas=$("map"),ctx=canvas.getContext("2d"),wrap=$("mapwrap");
 var cw=300,ch=300,dpr=1,view={lat:20.8,lng:80.75,z:11},layer="sat",TILE=256,tiles={},tilesOk={},dirty=true;
 var LAYERS={
-  sat:{url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"+z+"/"+y+"/"+x;},max:18,attr:"Imagery © Esri"},
-  street:{url:function(z,x,y){return "https://tile.openstreetmap.org/"+z+"/"+x+"/"+y+".png";},max:19,attr:"© OpenStreetMap contributors"},
-  mappls:{url:null,max:19,attr:"© Mappls MapmyIndia"}
+  sat:{url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"+z+"/"+y+"/"+x;},max:19,imgMax:18,attr:"Imagery © Esri, Maxar, Earthstar · Labels © Esri",
+       overlays:[{id:"roads",max:19,url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/"+z+"/"+y+"/"+x;}},
+                 {id:"places",max:19,url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/"+z+"/"+y+"/"+x;}}]},
+  street:{url:function(z,x,y){return "https://tile.openstreetmap.org/"+z+"/"+x+"/"+y+".png";},max:19,attr:"© OpenStreetMap contributors"}
 };
 function project(lat,lng,z){var s=TILE*Math.pow(2,z),sn=Math.sin(Math.max(-85,Math.min(85,lat))*Math.PI/180);return {x:(lng+180)/360*s,y:(0.5-Math.log((1+sn)/(1-sn))/(4*Math.PI))*s};}
 function unproject(x,y,z){var s=TILE*Math.pow(2,z),n=Math.PI-2*Math.PI*y/s;return {lat:180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))),lng:x/s*360-180};}
 function toScreen(lat,lng){var c=project(view.lat,view.lng,view.z),p=project(lat,lng,view.z);return {x:p.x-c.x+cw/2,y:p.y-c.y+ch/2};}
 function toLL(sx,sy){var c=project(view.lat,view.lng,view.z);return unproject(c.x+sx-cw/2,c.y+sy-ch/2,view.z);}
 function kmPx(k,lat){return k*1000/(156543.03392*Math.cos(lat*Math.PI/180)/Math.pow(2,view.z));}
-function resize(){var r=wrap.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);cw=Math.max(1,r.width);ch=Math.max(1,r.height);canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);var f=$("fly");f.width=canvas.width;f.height=canvas.height;dirty=true;if(mp.map&&mp.map.resize){try{mp.map.resize();}catch(e){}}}
+function resize(){var r=wrap.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);cw=Math.max(1,r.width);ch=Math.max(1,r.height);canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);var f=$("fly");f.width=canvas.width;f.height=canvas.height;dirty=true;}
 var colors={};
 function readColors(){var cs=getComputedStyle(document.documentElement);["map-bg","map-grid","map-ink","inner","outer","accent","ink","bg"].forEach(function(k){colors[k]=cs.getPropertyValue("--"+k).trim()||"#888";});dirty=true;}
 function rgba(hex,a){var h=hex.replace("#","");if(h.length===3)h=h.split("").map(function(c){return c+c;}).join("");var n=parseInt(h,16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")";}
 var FONT="Noto Sans, system-ui, sans-serif";
-function getTile(z,x,y){
-  var k=layer+"/"+z+"/"+x+"/"+y,t=tiles[k],L=layer;
-  if(!t){t=tiles[k]={img:new Image(),ok:false};t.img.onload=function(){t.ok=true;tilesOk[L]=true;if(noteKind==="tiles")hideNote();dirty=true;};t.img.onerror=function(){dirty=true;};t.img.src=LAYERS[layer].url(z,x,y);}
+function getTile(id,urlFn,z,x,y){
+  var k=id+"/"+z+"/"+x+"/"+y,t=tiles[k];
+  if(!t){t=tiles[k]={img:new Image(),ok:false,bad:false};t.img.onload=function(){t.ok=true;tilesOk[id]=true;if(noteKind==="tiles")hideNote();dirty=true;};t.img.onerror=function(){t.bad=true;dirty=true;};t.img.src=urlFn(z,x,y);}
   return t;
 }
-function drawTiles(){
-  var L=LAYERS[layer];if(!L.url)return false;
-  var zi=Math.max(1,Math.min(L.max,Math.floor(view.z))),sc=Math.pow(2,view.z-zi),c=project(view.lat,view.lng,zi),n=Math.pow(2,zi),drew=false;
+function drawLayer(id,urlFn,max,peek){
+  var zi=Math.max(1,Math.min(max,Math.floor(view.z+0.3))),sc=Math.pow(2,view.z-zi),c=project(view.lat,view.lng,zi),n=Math.pow(2,zi),drew=false;
   var x0=Math.floor((c.x-cw/2/sc)/TILE),x1=Math.floor((c.x+cw/2/sc)/TILE),y0=Math.max(0,Math.floor((c.y-ch/2/sc)/TILE)),y1=Math.min(n-1,Math.floor((c.y+ch/2/sc)/TILE));
-  for(var ty=y0;ty<=y1;ty++)for(var tx=x0;tx<=x1;tx++){var t=getTile(zi,((tx%n)+n)%n,ty);if(t.ok){ctx.drawImage(t.img,(tx*TILE-c.x)*sc+cw/2,(ty*TILE-c.y)*sc+ch/2,TILE*sc+0.5,TILE*sc+0.5);drew=true;}}
+  for(var ty=y0;ty<=y1;ty++)for(var tx=x0;tx<=x1;tx++){
+    var wx=((tx%n)+n)%n,dx=(tx*TILE-c.x)*sc+cw/2,dy=(ty*TILE-c.y)*sc+ch/2,sz=TILE*sc;
+    var tl=getTile(id,urlFn,zi,wx,ty);
+    if(tl.ok){ctx.drawImage(tl.img,dx,dy,sz+0.5,sz+0.5);drew=true;continue;}
+    if(peek&&zi>1){var pk=tiles[id+"/"+(zi-1)+"/"+(wx>>1)+"/"+(ty>>1)];if(pk&&pk.ok){ctx.drawImage(pk.img,(wx&1)*128,(ty&1)*128,128,128,dx,dy,sz+0.5,sz+0.5);drew=true;}}
+  }
   return drew;
+}
+var labelsOn=true;try{if(localStorage.getItem("tigerZoneLabels")==="0")labelsOn=false;}catch(e){}
+function drawTiles(){
+  var L=LAYERS[layer];
+  var drew=drawLayer(layer,L.url,L.imgMax||L.max,true);
+  baseDrew=drew;
+  return drew;
+}
+var baseDrew=false;
+function drawOverlays(){
+  var L=LAYERS[layer];if(baseDrew&&layer==="sat"&&labelsOn&&L.overlays)L.overlays.forEach(function(o){drawLayer(o.id,o.url,o.max,false);});
 }
 function drawGrid(){
   var tl=toLL(0,0),br=toLL(cw,ch),steps=[2,1,0.5,0.25,0.1,0.05,0.02,0.01,0.005],step=0.005;
@@ -377,11 +393,13 @@ function draw(now){
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=colors["map-bg"];ctx.fillRect(0,0,cw,ch);
   if(!drawTiles())drawGrid();
   hits=[];
+  if(!(A&&A.last))drawOverlays();
   if(growT0){var g=Math.min(1,(now-growT0)/1100);grow=1-Math.pow(1-g,3);if(g>=1)growT0=0;}
   if(A&&A.last){
     var L=A.last,z=zone();
     var o=ring(L,z.outer*grow,rgba(colors.outer,0.16),colors.outer,3);
     var n=ring(L,z.inner*grow,rgba(colors.inner,0.28),colors.inner,3);
+    drawOverlays();
     if(!reduce&&grow===1){var ph=(now%2400)/2400;ring(L,z.outer*ph,null,rgba(colors.outer,0.9*(1-ph)),3);}
     if(A.S.length>1){ctx.beginPath();A.S.forEach(function(p,i){var s=toScreen(p.lat,p.lng);i?ctx.lineTo(s.x,s.y):ctx.moveTo(s.x,s.y);});ctx.lineWidth=5;ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineCap="round";ctx.stroke();ctx.lineWidth=2.5;ctx.strokeStyle="#1E2B23";ctx.setLineDash([3,6]);ctx.stroke();ctx.setLineDash([]);}
     A.S.forEach(function(p,i){if(i===A.S.length-1)return;var s=toScreen(p.lat,p.lng);ctx.beginPath();ctx.arc(s.x,s.y,9,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#1E2B23";ctx.stroke();ctx.fillStyle="#1E2B23";ctx.font="700 10px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(i+1),s.x,s.y+0.5);hits.push({x:s.x,y:s.y,p:p,i:i});});
@@ -397,15 +415,14 @@ function draw(now){
   if(pick){var q=toScreen(pick.lat,pick.lng);ctx.strokeStyle="#fff";ctx.lineWidth=5;ctx.beginPath();ctx.arc(q.x,q.y,13,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=colors.accent;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(q.x-8,q.y);ctx.lineTo(q.x+8,q.y);ctx.moveTo(q.x,q.y-8);ctx.lineTo(q.x,q.y+8);ctx.stroke();}
   scaleBar();
 }
-function loop(now){if(layer!=="mappls"&&(!reduce||dirty||growT0)){draw(now);dirty=false;}if(flying)flyFrame(now);requestAnimationFrame(loop);}
-function zoomAt(sx,sy,nz){nz=Math.max(3,Math.min(18.5,nz));var ll=toLL(sx,sy),p=project(ll.lat,ll.lng,nz),c=unproject(p.x-(sx-cw/2),p.y-(sy-ch/2),nz);view={lat:c.lat,lng:c.lng,z:nz};dirty=true;$("info").hidden=true;}
+function loop(now){if((!reduce||dirty||growT0)){draw(now);dirty=false;}if(flying)flyFrame(now);requestAnimationFrame(loop);}
+function zoomAt(sx,sy,nz){nz=Math.max(3,Math.min(20,nz));var ll=toLL(sx,sy),p=project(ll.lat,ll.lng,nz),c=unproject(p.x-(sx-cw/2),p.y-(sy-ch/2),nz);view={lat:c.lat,lng:c.lng,z:nz};dirty=true;$("info").hidden=true;}
 function fit(){
   if(!A||!A.last)return;var z=zone(),pts=A.S.slice(),L=A.last,r=Math.max(z.outer,1.5),dl=r/110.574,dg=r/(111.32*Math.cos(L.lat*Math.PI/180));
   pts.push({lat:L.lat+dl,lng:L.lng+dg},{lat:L.lat-dl,lng:L.lng-dg});
   var la=pts.map(function(p){return p.lat;}),lo=pts.map(function(p){return p.lng;}),N=Math.max.apply(null,la),S=Math.min.apply(null,la),E=Math.max.apply(null,lo),W=Math.min.apply(null,lo),zz=17;
   for(;zz>3;zz-=0.25){var a=project(N,W,zz),b=project(S,E,zz);if(b.x-a.x<=cw-60&&b.y-a.y<=ch-190)break;}
   var a2=project(N,W,zz),b2=project(S,E,zz),m=unproject((a2.x+b2.x)/2,(a2.y+b2.y)/2-22,zz);view={lat:m.lat,lng:m.lng,z:zz};dirty=true;
-  if(layer==="mappls")mpView();
 }
 var ptr={},gest=null;
 canvas.addEventListener("pointerdown",function(e){canvas.setPointerCapture(e.pointerId);ptr[e.pointerId]={x:e.offsetX,y:e.offsetY};var ids=Object.keys(ptr);
@@ -418,8 +435,8 @@ function endPtr(e){if(!ptr[e.pointerId])return;delete ptr[e.pointerId];if(gest&&
   if(!Object.keys(ptr).length)gest=null;else if(gest&&gest.type==="pinch"){var id=Object.keys(ptr)[0];gest={type:"pan",lx:ptr[id].x,ly:ptr[id].y,moved:99,t:0};}}
 canvas.addEventListener("pointerup",endPtr);canvas.addEventListener("pointercancel",endPtr);
 canvas.addEventListener("wheel",function(e){e.preventDefault();zoomAt(e.offsetX,e.offsetY,view.z-e.deltaY*0.0022);},{passive:false});
-$("zin").onclick=function(){if(layer==="mappls"&&mp.map){try{mp.map.setZoom(mp.map.getZoom()+1);}catch(e){}return;}zoomAt(cw/2,ch/2,view.z+1);};
-$("zout").onclick=function(){if(layer==="mappls"&&mp.map){try{mp.map.setZoom(mp.map.getZoom()-1);}catch(e){}return;}zoomAt(cw/2,ch/2,view.z-1);};
+$("zin").onclick=function(){zoomAt(cw/2,ch/2,view.z+1);};
+$("zout").onclick=function(){zoomAt(cw/2,ch/2,view.z-1);};
 $("zfit").onclick=fit;
 function fillPick(lat,lng){pick={lat:lat,lng:lng};dirty=true;$("qLat").value=fmt(lat,5);$("qLng").value=fmt(lng,5);$("eLat").textContent="";$("eLng").textContent="";toast(t("picked"));}
 function tap(x,y){
@@ -427,7 +444,7 @@ function tap(x,y){
   var info=$("info");
   if(best){var h=best.h,last=h.i===A.S.length-1;info.innerHTML="<b>"+(last?t("lastLoc"):t("locN",{n:h.i+1}))+"</b><br>"+esc(dt(h.p.t))+"<br><span class=mono>"+fmt(h.p.lat,4)+", "+fmt(h.p.lng,4)+"</span>";info.hidden=false;
     var w=info.offsetWidth,hh=info.offsetHeight;info.style.left=Math.max(6,Math.min(cw-w-6,x-w/2))+"px";info.style.top=(y-hh-16<60?y+16:y-hh-16)+"px";return;}
-  info.hidden=true;var ll=toLL(x,y);fillPick(ll.lat,ll.lng);
+  info.hidden=true;var ll=toLL(x,y);showCoord(ll);fillPick(ll.lat,ll.lng);
 }
 
 /* ---------- notes ---------- */
@@ -435,67 +452,12 @@ var noteKind=null,noteClosed={};
 function showNote(kind,text){if(noteClosed[kind]||flying)return;noteKind=kind;$("mapnoteText").textContent=text;$("mapnote").hidden=false;}
 function hideNote(){noteKind=null;$("mapnote").hidden=true;}
 $("mapnoteX").onclick=function(){if(noteKind)noteClosed[noteKind]=true;hideNote();};
-function checkTiles(){var L=layer;setTimeout(function(){if(layer===L&&L!=="mappls"&&!tilesOk[L])showNote("tiles",t("nTiles"));},4000);}
-
-/* ---------- Mappls (MapmyIndia) ---------- */
-var mp={key:"",state:"none",map:null,ready:false,layers:[]};
-try{mp.key=localStorage.getItem(KKEY)||"";}catch(e){}
-function setKeyStatus(t,cls){var el=$("keyStatus");el.textContent=t;el.className="status"+(cls?" "+cls:"");}
-function loadMappls(){
-  if(mp.state==="ready"||mp.state==="loading")return mp.promise;
-  mp.state="loading";
-  mp.promise=new Promise(function(res,rej){
-    var done=false;function ok(){if(!done){done=true;res();}}function bad(m){if(!done){done=true;rej(new Error(m));}}
-    var s=document.createElement("script");s.src="https://sdk.mappls.com/map/sdk/web?v=3.0&access_token="+encodeURIComponent(mp.key);s.async=true;
-    s.onerror=function(){bad("load");};document.head.appendChild(s);
-    var t0=Date.now();(function poll(){if(window.mappls&&typeof window.mappls.Map==="function")return ok();if(Date.now()-t0>12000)return bad("timeout");setTimeout(poll,200);})();
-  }).then(function(){mp.state="ready";},function(e){mp.state="failed";throw e;});
-  return mp.promise;
-}
-function useMappls(){
-  if(!mp.key){showNote("nokey",t("nNoKey"));$("setBox").open=true;setLayer("sat");return;}
-  hideNote();$("map").style.visibility="hidden";$("mapplsMap").hidden=false;$("attr").textContent=LAYERS.mappls.attr;
-  setKeyStatus(t("kLoading"),"");
-  loadMappls().then(function(){
-    setKeyStatus(t("kOk"),"good");
-    if(!mp.map){
-      try{
-        mp.map=new window.mappls.Map("mapplsMap",{center:{lat:view.lat,lng:view.lng},zoom:Math.round(view.z)});
-        var onLoad=function(){if(mp.ready)return;mp.ready=true;mpDraw();};
-        if(mp.map.addListener){mp.map.addListener("load",onLoad);mp.map.addListener("click",function(e){var ll=e&&(e.lngLat||e.latlng||e.latLng);if(ll){var la=typeof ll.lat==="function"?ll.lat():ll.lat,lo=typeof ll.lng==="function"?ll.lng():ll.lng;fillPick(la,lo);}});}
-        setTimeout(onLoad,4000);
-      }catch(err){mappsFail(t("kMapErr",{m:(err&&err.message||"error")}));}
-    }else mpDraw();
-  },function(){mappsFail(t("kFail"));});
-}
-function mappsFail(msg){setKeyStatus(msg,"bad");setLayer("sat");showNote("mapplsfail",msg);}
-function mpRemove(l){try{window.mappls.remove({map:mp.map,layer:l});}catch(e){try{if(l&&l.remove)l.remove();else if(l&&l.setMap)l.setMap(null);}catch(_){}}}
-function mpView(){if(!mp.map)return;try{mp.map.setCenter({lat:view.lat,lng:view.lng});mp.map.setZoom(Math.max(3,Math.round(view.z*2)/2));}catch(e){}}
-function mpDraw(){
-  if(!mp.ready||!mp.map||!A||!A.last)return;
-  mp.layers.forEach(mpRemove);mp.layers=[];
-  var M=window.mappls,L=A.last,z=zone(),add=function(f){try{var o=f();if(o)mp.layers.push(o);}catch(e){}};
-  add(function(){return new M.Circle({map:mp.map,center:{lat:L.lat,lng:L.lng},radius:Math.round(z.outer*1000),strokeColor:"#C23B27",strokeOpacity:1,strokeWeight:3,fillColor:"#C23B27",fillcolor:"#C23B27",fillOpacity:0.15});});
-  add(function(){return new M.Circle({map:mp.map,center:{lat:L.lat,lng:L.lng},radius:Math.round(z.inner*1000),strokeColor:"#C88A0C",strokeOpacity:1,strokeWeight:3,fillColor:"#E6A817",fillcolor:"#E6A817",fillOpacity:0.3});});
-  if(A.S.length>1)add(function(){return new M.Polyline({map:mp.map,path:A.S.map(function(p){return {lat:p.lat,lng:p.lng};}),strokeColor:"#1E2B23",strokeWeight:3});});
-  A.S.forEach(function(p,i){var last=i===A.S.length-1;add(function(){
-    try{return new M.Marker({map:mp.map,position:{lat:p.lat,lng:p.lng},html:"<div class=\"mp-pin"+(last?" last":"")+"\">"+(i+1)+"</div>",popupHtml:esc(dt(p.t))});}
-    catch(e){return new M.Marker({map:mp.map,position:{lat:p.lat,lng:p.lng}});}
-  });});
-  mpView();
-}
-$("keyForm").addEventListener("submit",function(e){e.preventDefault();var k=$("mpKey").value.trim();if(!k){setKeyStatus(t("kEmpty"),"bad");return;}
-  var changed=k!==mp.key;mp.key=k;try{localStorage.setItem(KKEY,k);}catch(_){}
-  if(changed&&mp.state!=="none"){setKeyStatus(t("kChanged"),"good");return;}
-  setKeyStatus(t("kSaved"),"good");setLayer("mappls");});
-$("keyShow").onclick=function(){var i=$("mpKey");i.type=i.type==="password"?"text":"password";this.textContent=t(i.type==="password"?"keyShow":"keyHide");};
-$("keyClear").onclick=function(){mp.key="";$("mpKey").value="";try{localStorage.removeItem(KKEY);}catch(_){}setKeyStatus(t("kRemoved"),"");if(layer==="mappls")setLayer("sat");};
+function checkTiles(){var L=layer;setTimeout(function(){if(layer===L&&!tilesOk[L])showNote("tiles",t("nTiles"));},4000);}
 
 function setLayer(l){
   layer=l;document.querySelectorAll(".seg button").forEach(function(o){o.setAttribute("aria-pressed",String(o.dataset.layer===l));});
   try{localStorage.setItem("tigerZoneLayer",l);}catch(e){}
-  if(l==="mappls"){useMappls();return;}
-  $("mapplsMap").hidden=true;$("map").style.visibility="visible";$("attr").textContent=LAYERS[l].attr;if(noteKind==="nokey"||noteKind==="mapplsfail")hideNote();dirty=true;checkTiles();
+  $("attr").textContent=LAYERS[l].attr;$("labelsBtn").hidden=l!=="sat";dirty=true;checkTiles();
 }
 document.querySelectorAll(".seg button").forEach(function(b){b.onclick=function(){setLayer(b.dataset.layer);};});
 
@@ -558,6 +520,12 @@ function beep(f,d,delay){var a=audio();if(!a)return;var t=a.currentTime+(delay||
 function titi(){if(!soundOn)return;beep(1175,0.1,0);beep(1175,0.1,0.16);beep(1568,0.18,0.32);}
 function scanSound(){if(!soundOn)return;for(var i=0;i<6;i++)beep(660+i*60,0.05,i*0.3);}
 function tick(){if(soundOn)beep(988,0.06,0);}
+$("labelsBtn").onclick=function(){labelsOn=!labelsOn;try{localStorage.setItem("tigerZoneLabels",labelsOn?"1":"0");}catch(e){}this.textContent=t(labelsOn?"labelsOn":"labelsOff");this.setAttribute("aria-pressed",String(labelsOn));dirty=true;};
+$("copyMail").onclick=function(){var b=this,m="hexorhexor66@gmail.com";function sel(){var r=document.createRange();r.selectNodeContents($("mailTxt"));var g=window.getSelection();g.removeAllRanges();g.addRange(r);toast(t("selected"));}
+  try{navigator.clipboard.writeText(m).then(function(){toast(t("copied"));},sel);}catch(e){sel();}};
+function showCoord(ll){$("coord").textContent=fmt(ll.lat,5)+"°N, "+fmt(ll.lng,5)+"°E";}
+canvas.addEventListener("pointermove",function(e){if(e.pointerType==="mouse"&&!gest)showCoord(toLL(e.offsetX,e.offsetY));});
+canvas.addEventListener("pointerleave",function(){if(A&&A.last)showCoord(A.last);});
 $("soundBtn").onclick=function(){soundOn=!soundOn;this.setAttribute("aria-pressed",String(soundOn));this.textContent=t(soundOn?"soundOn":"soundOff");if(soundOn){audio();beep(880,0.1,0);}};
 
 /* ---------- render ---------- */
@@ -566,26 +534,24 @@ function renderTable(){
   var now=Date.now();
   $("tbl").innerHTML=AHEAD.map(function(r){var z=A.reach(A.el+r[0]);return "<tr data-h=\""+r[0]+"\" tabindex=\"0\""+(r[0]===sel?" class=\"sel\" aria-selected=\"true\"":"")+"><td><span class=\"when-t\">"+t(r[1])+"</span>"+(r[0]?"<small>"+t("later")+"</small>":"<small>"+esc(t("since",{d:dur(A.el)}))+"</small>")+"<small class=\"d-m\">"+esc(dt(now+r[0]*HR))+"</small>"+"</td><td>"+esc(dt(now+r[0]*HR))+"</td><td class=\"r\"><span class=\"km-in\">"+km(z.inner)+" km</span></td><td class=\"r\"><span class=\"km-out\">"+km(z.outer)+" km</span></td><td class=\"r\"><span class=\"view\">"+t(r[0]===sel?"onMapSel":"onMap")+"</span></td></tr>";}).join("");
 }
-function pickRow(h){sel=h;renderTable();var lt=AHEAD.filter(function(r){return r[0]===h;})[0];$("maptag").textContent=h?t("zoneAt",{x:t(lt[1])}):t("zoneNow");grow=0;growT0=performance.now();fit();dirty=true;if(layer==="mappls")mpDraw();tick();}
+function pickRow(h){sel=h;renderTable();var lt=AHEAD.filter(function(r){return r[0]===h;})[0];$("maptag").textContent=h?t("zoneAt",{x:t(lt[1])}):t("zoneNow");grow=0;growT0=performance.now();fit();dirty=true;tick();}
 $("tbl").addEventListener("click",function(e){var tr=e.target.closest("tr[data-h]");if(tr){pickRow(+tr.dataset.h);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}});
 $("tbl").addEventListener("keydown",function(e){if(e.key!=="Enter"&&e.key!==" ")return;var tr=e.target.closest("tr[data-h]");if(tr){e.preventDefault();pickRow(+tr.dataset.h);}});
 function render(){
   A=analyze(Date.now());dirty=true;
-  $("sampleNote").hidden=!state.sample;
+  $("sampleNote").hidden=!state.sample;$("clearOld").closest(".oldbar").hidden=!state.points.length;
   if(!A.last){$("dialN").textContent="–";$("headline").textContent=t("noLoc");$("subline").textContent="";}
   else{
     $("dialN").textContent=km(A.inner);
     $("headline").innerHTML=t("headline",{km:km(A.outer)});
     $("subline").textContent=t("subline",{t:dt(A.last.t),ago:dur(A.el),ll:fmt(A.last.lat,4)+", "+fmt(A.last.lng,4)});
-    var la=fmt(A.last.lat,5),lo=fmt(A.last.lng,5);
+    var la=fmt(A.last.lat,5),lo=fmt(A.last.lng,5);showCoord(A.last);
     $("earthLink").href="https://earth.google.com/web/@"+la+","+lo+",300a,"+Math.round(Math.max(A.outer,2)*2600)+"d,35y,0h,0t,0r";
-    $("mapplsLink").href="https://mappls.com/@"+la+","+lo+","+(A.outer>15?11:12)+"z";
   }
   renderTable();
   $("histCount").textContent=A.S.length;
   $("hist").innerHTML=A.S.map(function(p,i){return {h:"<li"+(i===A.S.length-1?" class=\"last\"":"")+"><span class=\"num\">"+(i+1)+"</span><span>"+esc(dt(p.t))+"<small class=\"mono\">"+fmt(p.lat,4)+", "+fmt(p.lng,4)+"</small></span><button type=\"button\" class=\"x\" data-del=\""+esc(p.id)+"\">"+t("del")+"</button></li>"};}).reverse().map(function(r){return r.h;}).join("")||"<li style=\"grid-template-columns:1fr\">"+t("noHist")+"</li>";
   ["avg","max"].forEach(function(k){var el=$("set"+(k==="avg"?"Avg":"Max"));if(document.activeElement!==el)el.value=state.set[k];});
-  if(layer==="mappls")mpDraw();
 }
 
 /* ---------- form ---------- */
@@ -607,20 +573,21 @@ $("qForm").addEventListener("submit",function(e){
 function showResult(animate){
   render();fit();grow=0;
   var T=A.last;if(!T){grow=1;return;}
-  if(animate)startFly({lat:T.lat,lng:T.lng},function(){growT0=performance.now();titi();if(layer==="mappls")mpDraw();else checkTiles();});
+  if(animate)startFly({lat:T.lat,lng:T.lng},function(){growT0=performance.now();titi();checkTiles();});
   else grow=1;
 }
 $("replay").onclick=function(){if(A&&A.last){audio();scanSound();showResult(true);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}};
 ["setAvg","setMax"].forEach(function(id){$(id).addEventListener("change",function(){var v=parseFloat(this.value);if(isNaN(v)||v<=0){render();return;}state.set[id==="setAvg"?"avg":"max"]=v;if(state.set.max<state.set.avg)state.set.max=state.set.avg;save();render();});});
 function armed(b,fn){if(b.dataset.armed){fn();return;}var old=b.textContent;b.dataset.armed="1";b.textContent=t("sure");setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.textContent=old;}},3000);}
 document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;armed(b,function(){state.points=state.points.filter(function(p){return p.id!==b.dataset.del;});state.sample=false;save();render();});});
+function clearAll(){state.points=[];state.sample=false;save();sel=0;pick=null;render();$("coord").textContent="";toast(t("cleared"));}
+$("clearOld").onclick=function(){armed(this,clearAll);};
 $("clearBtn").onclick=function(){armed(this,function(){state.points=[];state.sample=false;save();render();toast(t("cleared"));});};
 $("dlBtn").onclick=async function(){
   var clone=document.documentElement.cloneNode(true);
   clone.querySelectorAll("script").forEach(function(s){if(s.id!=="seed"&&s.id!=="app-js")s.remove();});
   var sd=clone.querySelector("#seed");if(sd)sd.textContent=JSON.stringify(state);
   var tn=clone.querySelector("#toast");if(tn)tn.remove();
-  var mm=clone.querySelector("#mapplsMap");if(mm){mm.innerHTML="";mm.setAttribute("hidden","");}
   var html="<!doctype html>\n"+clone.outerHTML;
   try{if(window.claude&&window.claude.use){var d=await window.claude.use("downloads");if(d){await d.save({filename:"tiger-zone-tracker.html",data:new Blob([html],{type:"text/html"})});toast(t("saved"));return;}}}catch(err){if(err&&err.code==="declined")return;}
   try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));a.download="tiger-zone-tracker.html";document.body.appendChild(a);a.click();a.remove();}catch(err){toast(t("dlFail"));}
@@ -634,13 +601,12 @@ new MutationObserver(readColors).observe(document.documentElement,{attributes:tr
 if(window.ResizeObserver)new ResizeObserver(resize).observe(wrap);else window.addEventListener("resize",resize);
 window.__t=t;
 applyStatic();
-document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){lang=b.dataset.lang;try{localStorage.setItem("tigerZoneLang",lang);}catch(e){}applyStatic();render();var ks=$("keyStatus");if(ks.textContent&&mp.key)setKeyStatus(t(mp.state==="ready"?"kOk":"kHas"),"good");};});
+document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){lang=b.dataset.lang;try{localStorage.setItem("tigerZoneLang",lang);}catch(e){}applyStatic();render();};});
 resize();$("attr").textContent=LAYERS[layer].attr;
-if(mp.key){$("mpKey").value=mp.key;setKeyStatus(t("kHas"),"good");}
 if(state.sample){$("qLat").value="20.82000";$("qLng").value="80.75500";}
 render();fit();
 var savedLayer=null;try{savedLayer=localStorage.getItem("tigerZoneLayer");}catch(e){}
-if(savedLayer==="mappls"&&mp.key)setLayer("mappls");
+setLayer(savedLayer==="street"?"street":"sat");
 showResult(true);
 setInterval(function(){if(!flying)render();},60000);
 requestAnimationFrame(loop);
