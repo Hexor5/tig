@@ -5,6 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="author" content="Shubham (hexorhexor66@gmail.com)">
 <title>Tiger Zone Tracker</title>
+<style id="leaflet-fallback">
+/* Minimal Leaflet layout rules; the full leaflet.css from the CDN below overrides these when it loads. */
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;-webkit-tap-highlight-color:transparent;outline-offset:1px}
+.leaflet-container.leaflet-touch-zoom{touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{touch-action:none}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{touch-action:none}
+.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{user-select:none;-webkit-user-drag:none}
+.leaflet-container img.leaflet-tile,.leaflet-container .leaflet-tile,.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}
+.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}
+.leaflet-zoom-box{width:0;height:0;z-index:800}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}
+.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}
+.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto;float:left;clear:both}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}
+.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}
+.leaflet-fade-anim .leaflet-popup{opacity:0;transition:opacity .2s linear}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{transition:none}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}
+.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}
+.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:grabbing}
+.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}
+.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive{pointer-events:visiblePainted;pointer-events:auto}
+.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4}
+.leaflet-control-attribution a{text-decoration:none}
+.leaflet-container .leaflet-control-attribution,.leaflet-container .leaflet-control-scale{font-size:11px}
+.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;box-sizing:border-box;background:rgba(255,255,255,.8)}
+.leaflet-control-attribution{margin:0}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+<script id="leaflet-js" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Noto+Sans:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -96,10 +127,42 @@ td .km-out{color:var(--outer);font-weight:700}
 .mapcard{padding:14px}
 .mapwrap{position:relative;height:min(64vh,560px);min-height:360px;background:var(--map-bg);border-radius:18px;overflow:hidden;box-shadow:var(--press)}
 #map,#gmap{position:absolute;inset:0;width:100%;height:100%}
-#map{display:block;touch-action:none;cursor:grab}
-#fly{position:absolute;inset:0;width:100%;height:100%;z-index:5}
-#skipFly{position:absolute;right:12px;bottom:12px;z-index:6;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;border-radius:10px;padding:6px 12px;font-size:.85rem}
-.mtop{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none;z-index:3}
+#map{display:block;background:var(--map-bg);font-family:var(--font-body)}
+#map.nomap{display:flex;align-items:center;justify-content:center}
+.leaflet-container .leaflet-control-attribution{background:color-mix(in srgb,var(--bg) 88%,transparent);color:var(--muted);border-radius:8px 0 0 0;padding:1px 6px;max-width:calc(100vw - 60px);white-space:normal}
+.leaflet-container .leaflet-control-attribution a{color:var(--accent)}
+.leaflet-bottom.leaflet-right .leaflet-control-scale{margin-bottom:4px}
+.tz-pin-wrap{background:none;border:0}
+.tz-pin{position:absolute;left:0;top:0;transform:translate(-50%,-50%);display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;border:2px solid #1E2B23;color:#1E2B23;font:700 10px/1 var(--font-body);box-shadow:0 1px 4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer}
+.tz-pin.last{width:26px;height:26px;background:#C23B27;border:3px solid #fff;color:#fff}
+.tz-pin.last::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:3px solid #C23B27;animation:tzp 1.2s ease-out infinite}
+@keyframes tzp{from{transform:scale(1);opacity:.7}to{transform:scale(2.2);opacity:0}}
+.tz-pick{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;border:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 22%,transparent);box-shadow:0 0 0 2px #fff}
+.tz-me{position:absolute;transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#2F6FD6;border:3px solid #fff;box-shadow:0 0 0 2px rgba(47,111,214,.35)}
+.ring-lbl{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;padding:3px 9px;border-radius:999px;color:#fff;font:700 12px/1.2 var(--font-body);box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.ring-lbl.o{background:#C23B27}.ring-lbl.i{background:#946400}
+.maploading{position:absolute;left:50%;bottom:70px;transform:translateX(-50%);z-index:1100;display:flex;align-items:center;gap:8px;background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:.82rem;box-shadow:var(--raise-sm);white-space:nowrap}
+.spin{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid color-mix(in srgb,var(--accent) 30%,transparent);border-top-color:var(--accent);animation:spin .8s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.georow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:14px}
+.ico{width:18px;height:18px;margin-right:6px;flex:none}
+#geoBtn{gap:2px}#geoBtn .spin{margin-left:8px}
+.elevf{margin-top:14px}
+.elevbox{position:relative}.elevbox .spin{position:absolute;right:14px;top:50%;margin-top:-7px}
+.note.sm{font-size:.8rem;margin:2px 0 0;padding-left:4px}
+.ovl{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 4px 0}
+.ovl-t{font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.ovl .btn[aria-pressed=true]{box-shadow:var(--press);color:var(--ok);font-weight:700}
+.ovl .btn:disabled{opacity:.55;cursor:not-allowed}
+.ovl-s{min-height:1em}
+.inrow{display:flex;gap:10px;align-items:center}.inrow input{flex:1}
+.srch{font-family:var(--font-display);font-weight:600;font-size:1.1rem;margin:20px 0 6px}
+.srcs{margin:0;padding-left:18px;font-size:.82rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.srcs a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.tz-pin.last::after,.spin{animation:none}}
+#fly{position:absolute;inset:0;width:100%;height:100%;z-index:1200}
+#skipFly{position:absolute;right:12px;bottom:12px;z-index:1210;border:1px solid rgba(255,255,255,.4);background:rgba(0,0,0,.35);color:#fff;border-radius:10px;padding:6px 12px;font-size:.85rem}
+.mtop{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none;z-index:1100}
 .mtop>*{pointer-events:auto}
 .seg{display:flex;gap:4px;padding:4px;border-radius:14px;background:var(--bg);box-shadow:var(--raise-sm)}
 .mtop .seg{flex-wrap:wrap;max-width:calc(100% - 66px)}
@@ -109,13 +172,13 @@ td .km-out{color:var(--outer);font-weight:700}
 .zoom{display:flex;flex-direction:column;gap:4px;padding:4px;border-radius:14px;background:var(--bg);box-shadow:var(--raise-sm)}
 .zoom button{border:0;background:transparent;width:38px;height:38px;border-radius:10px;font-size:1.2rem}
 .zoom button:active{box-shadow:var(--press)}
-.maptag{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:3;background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:.85rem;font-weight:700;box-shadow:var(--raise-sm);white-space:nowrap}
-.legend{position:absolute;left:10px;bottom:26px;z-index:3;background:var(--bg);border-radius:12px;padding:8px 11px;font-size:.78rem;display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center;box-shadow:var(--raise-sm)}
+.maptag{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:1100;background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 14px;font-size:.85rem;font-weight:700;box-shadow:var(--raise-sm);white-space:nowrap}
+.legend{position:absolute;left:10px;bottom:26px;z-index:1050;background:var(--bg);border-radius:12px;padding:8px 11px;font-size:.78rem;display:grid;grid-template-columns:auto auto;gap:4px 8px;align-items:center;box-shadow:var(--raise-sm)}
 .sw{width:16px;height:12px;border-radius:3px;display:inline-block}
 .attr{position:absolute;right:6px;bottom:4px;max-width:calc(100% - 12px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.66rem;color:var(--map-ink);background:var(--bg);padding:0 5px;border-radius:4px;opacity:.85;z-index:2}
-.mapnote{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:min(92%,440px);background:var(--bg);border-radius:14px;padding:10px 12px;font-size:.82rem;color:var(--muted);display:flex;gap:8px;align-items:flex-start;z-index:4;box-shadow:var(--raise-sm)}
+.mapnote{position:absolute;left:50%;top:100px;transform:translateX(-50%);width:min(92%,440px);background:var(--bg);border-radius:14px;padding:10px 12px;font-size:.82rem;color:var(--muted);display:flex;gap:8px;align-items:flex-start;z-index:1150;box-shadow:var(--raise-sm)}
 .mapnote button{border:0;background:transparent;color:var(--muted);font-size:1.1rem;line-height:1}
-.info{position:absolute;z-index:4;max-width:240px;background:var(--bg);border-radius:12px;padding:9px 11px;font-size:.82rem;box-shadow:var(--raise-sm);pointer-events:none}
+.info{position:absolute;z-index:1150;max-width:240px;background:var(--bg);border-radius:12px;padding:9px 11px;font-size:.82rem;box-shadow:var(--raise-sm);pointer-events:none}
 .mapbar{display:flex;flex-wrap:wrap;gap:12px;padding:16px 4px 4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;border:0;background:var(--bg);border-radius:14px;padding:11px 15px;font-size:.93rem;text-decoration:none;color:var(--ink);box-shadow:var(--raise-sm)}
 .btn:active{box-shadow:var(--press)}
@@ -142,7 +205,7 @@ details.card[open]>summary{margin-bottom:14px}
 .credit b{color:var(--accent);font-family:var(--font-mono);font-weight:500;user-select:all;overflow-wrap:anywhere}
 .btn.sm{padding:6px 12px;font-size:.82rem}
 .oldbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;margin-top:14px;font-size:.85rem;color:var(--muted);padding-left:4px}
-.coord{position:absolute;right:10px;bottom:46px;z-index:3;background:var(--bg);border-radius:10px;padding:4px 9px;font:500 .74rem var(--font-mono);color:var(--ink);box-shadow:var(--raise-sm)}
+.coord{position:absolute;right:10px;bottom:64px;z-index:1100;background:var(--bg);border-radius:10px;padding:4px 9px;font:500 .74rem var(--font-mono);color:var(--ink);box-shadow:var(--raise-sm)}
 @media (max-width:520px){.card{padding:18px;border-radius:20px}.app{gap:22px}}
 @media (max-width:560px){.maptag{top:104px}table{min-width:0}th:nth-child(2),td:nth-child(2),th:nth-child(5),td:nth-child(5){display:none}td .d-m{display:block}th,td{padding-left:10px;padding-right:10px}th.r,td.r{white-space:nowrap}tbody tr td:nth-child(4){border-radius:0 12px 12px 0}tbody tr.sel td:nth-child(4){box-shadow:-2px 0 0 0 var(--accent) inset,0 2px 0 0 var(--accent) inset,0 -2px 0 0 var(--accent) inset}}
 </style>
@@ -168,6 +231,14 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="row">
         <div class="f"><label for="qLat" data-i="lat"></label><input type="text" class="mono" inputmode="decimal" id="qLat" placeholder="20.8200"><span class="err" id="eLat"></span></div>
         <div class="f"><label for="qLng" data-i="lng"></label><input type="text" class="mono" inputmode="decimal" id="qLng" placeholder="80.7550"><span class="err" id="eLng"></span></div>
+      </div>
+      <div class="georow">
+        <button type="button" class="btn hl" id="geoBtn"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" fill="currentColor"/></svg><span data-i="geoBtn"></span><span class="spin" id="geoSpin" hidden></span></button>
+        <span class="status" id="geoStatus" aria-live="polite"></span>
+      </div>
+      <div class="f elevf"><label for="qElev" data-i="elev"></label>
+        <div class="elevbox"><input type="text" id="qElev" class="mono" readonly data-ip="elevPh"><span class="spin" id="elevSpin" hidden></span></div>
+        <span class="note sm" id="elevSrc" aria-live="polite"></span>
       </div>
       <div class="when">
         <span class="lbl" id="whenLbl" data-i="when"></span>
@@ -210,16 +281,16 @@ details.card[open]>summary{margin-bottom:14px}
     <h2 style="padding:4px 6px 12px"><span class="step">3</span><span data-i="s3"></span></h2>
     <div class="mapwrap" id="mapwrap">
             <div id="gmap" hidden></div>
-      <canvas id="map" data-ia="s3"></canvas>
+      <div id="map" data-ia="s3"></div>
       <canvas id="fly" hidden aria-hidden="true"></canvas>
       <button type="button" id="skipFly" hidden data-i="skip"></button>
       <div class="mtop">
         <div class="seg" role="group" data-ia="mapType">
           <button type="button" data-layer="google" aria-pressed="false" id="gBtn" hidden>Google</button>
+          <button type="button" data-layer="osm" aria-pressed="false" data-i="lBase"></button>
           <button type="button" data-layer="sat" aria-pressed="true" data-i="lSat"></button>
-          <button type="button" data-layer="street" aria-pressed="false" data-i="lStreet"></button>
+          <button type="button" data-layer="s2" aria-pressed="false">Sentinel-2</button>
           <button type="button" data-layer="topo" aria-pressed="false" data-i="lTopo"></button>
-          <button type="button" data-layer="osm" aria-pressed="false">OSM</button>
         </div>
         <div class="zoom">
           <button type="button" id="zin" data-ia="zin">+</button>
@@ -233,16 +304,22 @@ details.card[open]>summary{margin-bottom:14px}
         <span class="sw" style="background:var(--outer)"></span><span data-i="th4"></span>
       </div>
       <div class="info" id="info" hidden></div>
-      <div class="attr" id="attr"></div>
+      <div class="maploading" id="mapLoading" hidden><span class="spin"></span><span data-i="loadingMap"></span></div>
       <div class="coord" id="coord" aria-live="off"></div>
       <div class="mapnote" id="mapnote" hidden><span id="mapnoteText"></span><button type="button" id="mapnoteX" data-ia="close">×</button></div>
     </div>
     <div class="mapbar">
       <a class="btn hl" id="earthLink" href="#" target="_blank" rel="noopener" data-i="earth"></a>
-      <button type="button" class="btn" id="labelsBtn" aria-pressed="true"></button>
       <button type="button" class="btn" id="replay" data-i="replay"></button>
       <button type="button" class="btn" id="soundBtn" aria-pressed="true"></button>
     </div>
+    <div class="ovl" role="group" data-ia="overlays">
+      <span class="ovl-t" data-i="overlays"></span>
+      <button type="button" class="btn sm" id="labelsBtn" aria-pressed="true"></button>
+      <button type="button" class="btn sm" id="forestBtn" aria-pressed="false" disabled></button>
+      <button type="button" class="btn sm" id="bhuvanBtn" aria-pressed="false"></button>
+    </div>
+    <p class="note sm ovl-s" id="ovlStatus" aria-live="polite"></p>
     <div class="credit">
       <span data-i="credit"></span>
       <span class="mail"><span data-i="contact"></span> <b id="mailTxt">hexorhexor66@gmail.com</b></span>
@@ -277,6 +354,19 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="status" id="keyStatus"></div>
       <p class="note" data-i="keyNote"></p>
     </form>
+    <div class="f" style="margin-top:18px"><label for="bLayer" data-i="bLayer"></label>
+      <div class="inrow"><input type="text" id="bLayer" class="mono" autocomplete="off" spellcheck="false"><button type="button" class="btn sm" id="bApply" data-i="bSave"></button></div>
+      <span class="note sm" data-i="bNote"></span></div>
+    <h3 class="srch" data-i="srcTitle"></h3>
+    <ul class="srcs">
+      <li>Base map: © OpenStreetMap contributors (ODbL) · <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener">tile usage policy</a></li>
+      <li>Satellite: Esri World Imagery · <a href="https://www.esri.com/en-us/legal/terms/full-master-agreement" target="_blank" rel="noopener">Esri terms</a></li>
+      <li>Sentinel-2 cloudless 2020 by EOX · <a href="https://s2maps.eu" target="_blank" rel="noopener">s2maps.eu</a> (CC BY-NC-SA 4.0)</li>
+      <li>Terrain: <a href="https://opentopomap.org/about" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA) · Labels and fallback street map: Esri</li>
+      <li>Land use (LULC): <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noopener">Bhuvan, NRSC/ISRO</a></li>
+      <li>VEDAS, SAC/ISRO: <a href="https://vedas.sac.gov.in" target="_blank" rel="noopener">vedas.sac.gov.in</a> (link only)</li>
+      <li>Elevation: Copernicus DEM GLO-90 via <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC BY 4.0); fallback SRTM via <a href="https://www.opentopodata.org" target="_blank" rel="noopener">OpenTopoData</a></li>
+    </ul>
   </details>
 
   <p class="foot"><span data-i="foot"></span><br><span data-i="credit"></span> · hexorhexor66@gmail.com</p>
@@ -289,12 +379,12 @@ details.card[open]>summary{margin-bottom:14px}
 var HR=3600e3, KEY="tigerZoneSimple.v1", FLOOR=0.5, CAP=60;
 var $=function(id){return document.getElementById(id);};
 var I18N={
-hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",lStreet:"सड़क मैप",lTopo:"पहाड़/जंगल",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड, Google key)",keySave:"Key सेव करें",keyShow:"दिखाएँ",keyHide:"छुपाएँ",keyClear:"Key हटाएँ",keyNote:"Key सिर्फ़ इसी ब्राउज़र में सेव होती है। Google Cloud में key पर अपनी वेबसाइट का पता (Website restriction) ज़रूर लगाएँ।",kEmpty:"पहले key पेस्ट करें।",kBad:"यह Google key जैसी नहीं लगती (AIza से शुरू होती है)।",kSaved:"Key सेव हो गई।",kRemoved:"Key हटा दी।",kHas:"Key सेव है।",kLoading:"Google Maps लोड हो रहा है…",kOk:"Google Maps चल रहा है।",kReload:"Key बदली है। पेज रीलोड करें।",nNoKey:"Google Maps के लिए API key चाहिए। नीचे \"सेटिंग्स\" खोलें और key डालें।",kFail:"Google Maps नहीं खुला। Key सही है? Google Cloud में Maps JavaScript API चालू है, billing जुड़ी है, और इस वेबसाइट का पता allow है? (Claude के प्रीव्यू में Google Maps नहीं चलता।)",labelsOn:"नाम / सड़कें: चालू",labelsOff:"नाम / सड़कें: बंद",credit:"सॉफ़्टवेयर डेवलप किया: शुभम",contact:"संपर्क:",copy:"ईमेल कॉपी करें",copied:"ईमेल कॉपी हो गया",selected:"ईमेल चुना हुआ है, कॉपी कर लें",oldTxt:"पहले से सेव लोकेशन हटानी हैं?",clearOld:"पुराना डेटा हटाएँ",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
+hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",lStreet:"सड़क मैप",lTopo:"पहाड़/जंगल",lBase:"बेस मैप",nOsmFb:"OpenStreetMap की तस्वीरें नहीं आईं, इसलिए Esri का सड़क मैप दिखाया गया है।",sublineNow:"आख़िरी बार देखा: {t} (अभी-अभी) · {ll}",geoBtn:"मेरी वर्तमान लोकेशन लें",gBusy:"लोकेशन ली जा रही है…",gOk:"लोकेशन मिल गई · सटीकता ±{acc} मी.",gAlt:" · GPS ऊँचाई ~{alt} मी.",gDenied:"लोकेशन की अनुमति नहीं मिली। ब्राउज़र में इस साइट को Location की अनुमति दें और दोबारा दबाएँ।",gUnavail:"लोकेशन उपलब्ध नहीं। फ़ोन का GPS/Location चालू करें और खुले में दोबारा कोशिश करें।",gTimeout:"लोकेशन मिलने में बहुत समय लगा। दोबारा कोशिश करें।",gNoSupport:"यह ब्राउज़र लोकेशन सपोर्ट नहीं करता।",gInsecure:"लोकेशन सिर्फ़ https:// वाली वेबसाइट पर चलती है।",myLoc:"आपकी लोकेशन",elev:"ऊँचाई (समुद्र तल से, मीटर)",elevPh:"लोकेशन डालते ही अपने आप आएगी",elevBusy:"ऊँचाई निकाली जा रही है…",mUnit:"मी.",elevNA:"उपलब्ध नहीं",elevFrom:"स्रोत: {src} · DEM से अनुमानित, ±कुछ मीटर का अंतर संभव",elevFail:"ऊँचाई सेवा से जवाब नहीं मिला (इंटरनेट या सेवा बंद)। बाकी सब काम करता रहेगा।",elevNone:"इस जगह की ऊँचाई का डेटा उपलब्ध नहीं है।",elevShort:"ऊँचाई",loadingMap:"मैप लोड हो रहा है…",overlays:"मैप परतें",forestOn:"वन सीमा: चालू",forestOff:"वन सीमा: बंद",forestNA:"वन सीमा: डेटा नहीं",bhuvanOn:"Bhuvan भूमि उपयोग: चालू",bhuvanOff:"Bhuvan भूमि उपयोग: बंद",fNone:"वन सीमा: सत्यापित GIS फ़ाइल अभी नहीं डाली गई है, इसलिए कोई सीमा नहीं दिखाई जा रही।",fUnverified:"वन सीमा फ़ाइल में स्रोत और सत्यापन (metadata) की जानकारी नहीं है, इसलिए नहीं दिखाई गई।",fInvalid:"वन सीमा फ़ाइल सही GeoJSON नहीं है, इसलिए नहीं दिखाई गई।",fErr:"वन सीमा फ़ाइल लोड नहीं हुई।",fOk:"वन सीमा: {name} · स्रोत: {src} · सत्यापन: {by}, {on}",inF:"वन सीमा के अंदर",outF:"वन सीमा के बाहर",bLoading:"Bhuvan परत लोड हो रही है…",bOk:"Bhuvan भूमि उपयोग (LULC 1:50,000) दिख रहा है। यह कानूनी वन सीमा नहीं है।",bErr:"Bhuvan सर्वर से यह परत नहीं मिली (सर्वर बंद या layer का नाम गलत)। सेटिंग्स में नाम जाँचें।",nNoLib:"मैप लाइब्रेरी (Leaflet) लोड नहीं हुई। इंटरनेट जाँचें। बाकी हिसाब चलता रहेगा।",bLayer:"Bhuvan WMS layer का नाम",bSave:"लागू करें",bNote:"डिफ़ॉल्ट: छत्तीसगढ़ LULC 2015-16 (lulc:CG_LULC50K_1516)। सही नाम Bhuvan के GetCapabilities में जाँचें।",srcTitle:"डेटा स्रोत और शर्तें",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड, Google key)",keySave:"Key सेव करें",keyShow:"दिखाएँ",keyHide:"छुपाएँ",keyClear:"Key हटाएँ",keyNote:"Key सिर्फ़ इसी ब्राउज़र में सेव होती है। Google Cloud में key पर अपनी वेबसाइट का पता (Website restriction) ज़रूर लगाएँ।",kEmpty:"पहले key पेस्ट करें।",kBad:"यह Google key जैसी नहीं लगती (AIza से शुरू होती है)।",kSaved:"Key सेव हो गई।",kRemoved:"Key हटा दी।",kHas:"Key सेव है।",kLoading:"Google Maps लोड हो रहा है…",kOk:"Google Maps चल रहा है।",kReload:"Key बदली है। पेज रीलोड करें।",nNoKey:"Google Maps के लिए API key चाहिए। नीचे \"सेटिंग्स\" खोलें और key डालें।",kFail:"Google Maps नहीं खुला। Key सही है? Google Cloud में Maps JavaScript API चालू है, billing जुड़ी है, और इस वेबसाइट का पता allow है? (Claude के प्रीव्यू में Google Maps नहीं चलता।)",labelsOn:"नाम / सड़कें: चालू",labelsOff:"नाम / सड़कें: बंद",credit:"सॉफ़्टवेयर डेवलप किया: शुभम",contact:"संपर्क:",copy:"ईमेल कॉपी करें",copied:"ईमेल कॉपी हो गया",selected:"ईमेल चुना हुआ है, कॉपी कर लें",oldTxt:"पहले से सेव लोकेशन हटानी हैं?",clearOld:"पुराना डेटा हटाएँ",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
 headline:"ज़्यादा से ज़्यादा <span class=\"out\">{km} कि.मी.</span> तक जा सकता है",subline:"आख़िरी बार देखा: {t} ({ago} पहले) · {ll}",noLoc:"पहले लोकेशन डालें",noLocRow:"पहले लोकेशन डालें।",hours:"घंटे",days:"दिन",justNow:"अभी-अभी",later:"बाद",since:"आख़िरी बार देखने से {d}",onMap:"मैप पर",onMapSel:"मैप पर ✓",zoneNow:"ज़ोन: अभी",zoneAt:"ज़ोन: {x} बाद",a0:"अभी",a6:"6 घंटे",a12:"12 घंटे",a24:"24 घंटे (1 दिन)",a48:"2 दिन",a72:"3 दिन",lastLoc:"आख़िरी लोकेशन",locN:"लोकेशन {n}",picked:"लोकेशन भर दी। अब \"पता करें\" दबाएँ।",errNum:"{name} {min} से {max} के बीच लिखें",latN:"अक्षांश",lngN:"देशांतर",errDate:"तारीख और समय चुनें",errFuture:"आगे की तारीख नहीं चल सकती",noHist:"कोई लोकेशन नहीं।",del:"हटाएँ",sure:"पक्का? दोबारा दबाएँ",cleared:"साफ़ हो गया। नई लोकेशन डालें।",saved:"फ़ाइल सेव हो गई।",dlFail:"यहाँ डाउनलोड नहीं हुआ",
-nTiles:"इस प्रीव्यू में बाहर की मैप फ़ोटो लोड नहीं होती। \"Google Earth\" बटन दबाएँ, या फ़ाइल / GitHub लिंक Chrome में खोलें।"},
-en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",lStreet:"Street",lTopo:"Terrain",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed, Google key)",keySave:"Save key",keyShow:"Show",keyHide:"Hide",keyClear:"Remove key",keyNote:"The key is saved only in this browser. In Google Cloud, restrict the key to your website address.",kEmpty:"Paste a key first.",kBad:"This doesn't look like a Google key (it starts with AIza).",kSaved:"Key saved.",kRemoved:"Key removed.",kHas:"Key is saved.",kLoading:"Loading Google Maps…",kOk:"Google Maps is running.",kReload:"Key changed. Reload the page.",nNoKey:"Google Maps needs an API key. Open \"Settings\" below and add it.",kFail:"Google Maps didn't open. Is the key correct, is Maps JavaScript API enabled with billing, and is this website allowed on the key? (Google Maps doesn't run inside Claude's preview.)",labelsOn:"Names / roads: On",labelsOff:"Names / roads: Off",credit:"Software developed by Shubham",contact:"Contact:",copy:"Copy email",copied:"Email copied",selected:"Email selected, copy it",oldTxt:"Remove previously saved locations?",clearOld:"Remove old data",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
+nTiles:"मैप की तस्वीरें लोड नहीं हो रहीं। इंटरनेट जाँचें या ऊपर से दूसरा मैप चुनें।"},
+en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",lStreet:"Street",lTopo:"Terrain",lBase:"Base map",nOsmFb:"OpenStreetMap images didn't load, so the Esri street map is shown instead.",sublineNow:"Last seen: {t} (just now) · {ll}",geoBtn:"Get current location",gBusy:"Getting location…",gOk:"Location found · accuracy ±{acc} m",gAlt:" · GPS altitude ~{alt} m",gDenied:"Location permission was denied. Allow Location for this site in the browser and press again.",gUnavail:"Location unavailable. Turn on the phone's GPS/Location and try again in the open.",gTimeout:"Getting the location took too long. Try again.",gNoSupport:"This browser doesn't support location.",gInsecure:"Location works only on an https:// website.",myLoc:"Your location",elev:"Elevation (above sea level, m)",elevPh:"Fills in automatically after a location",elevBusy:"Getting elevation…",mUnit:"m",elevNA:"Not available",elevFrom:"Source: {src} · DEM estimate, may differ by a few metres",elevFail:"The elevation service did not respond (no internet or service down). Everything else still works.",elevNone:"No elevation data is available for this spot.",elevShort:"Elevation",loadingMap:"Loading map…",overlays:"Map layers",forestOn:"Forest boundary: On",forestOff:"Forest boundary: Off",forestNA:"Forest boundary: no data",bhuvanOn:"Bhuvan land use: On",bhuvanOff:"Bhuvan land use: Off",fNone:"Forest boundary: no verified GIS file has been added yet, so no boundary is shown.",fUnverified:"The forest boundary file has no source and verification metadata, so it is not shown.",fInvalid:"The forest boundary file is not valid GeoJSON, so it is not shown.",fErr:"Couldn't load the forest boundary file.",fOk:"Forest boundary: {name} · source: {src} · verified by {by}, {on}",inF:"inside forest boundary",outF:"outside forest boundary",bLoading:"Loading Bhuvan layer…",bOk:"Showing Bhuvan land use (LULC 1:50,000). This is not a legal forest boundary.",bErr:"The Bhuvan server didn't return this layer (server down or wrong layer name). Check the name in Settings.",nNoLib:"The map library (Leaflet) didn't load. Check the internet; calculations still work.",bLayer:"Bhuvan WMS layer name",bSave:"Apply",bNote:"Default: Chhattisgarh LULC 2015-16 (lulc:CG_LULC50K_1516). Verify the name in Bhuvan's GetCapabilities.",srcTitle:"Data sources and terms",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed, Google key)",keySave:"Save key",keyShow:"Show",keyHide:"Hide",keyClear:"Remove key",keyNote:"The key is saved only in this browser. In Google Cloud, restrict the key to your website address.",kEmpty:"Paste a key first.",kBad:"This doesn't look like a Google key (it starts with AIza).",kSaved:"Key saved.",kRemoved:"Key removed.",kHas:"Key is saved.",kLoading:"Loading Google Maps…",kOk:"Google Maps is running.",kReload:"Key changed. Reload the page.",nNoKey:"Google Maps needs an API key. Open \"Settings\" below and add it.",kFail:"Google Maps didn't open. Is the key correct, is Maps JavaScript API enabled with billing, and is this website allowed on the key? (Google Maps doesn't run inside Claude's preview.)",labelsOn:"Names / roads: On",labelsOff:"Names / roads: Off",credit:"Software developed by Shubham",contact:"Contact:",copy:"Copy email",copied:"Email copied",selected:"Email selected, copy it",oldTxt:"Remove previously saved locations?",clearOld:"Remove old data",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
 headline:"Can go at most <span class=\"out\">{km} km</span>",subline:"Last seen: {t} ({ago} ago) · {ll}",noLoc:"Enter a location first",noLocRow:"Enter a location first.",hours:"hours",days:"days",justNow:"just now",later:"from now",since:"since last seen: {d}",onMap:"On map",onMapSel:"On map ✓",zoneNow:"Zone: now",zoneAt:"Zone: in {x}",a0:"Now",a6:"6 hours",a12:"12 hours",a24:"24 hours (1 day)",a48:"2 days",a72:"3 days",lastLoc:"Last location",locN:"Location {n}",picked:"Location filled. Now press \"Find zone\".",errNum:"Enter {name} between {min} and {max}",latN:"latitude",lngN:"longitude",errDate:"Pick a date and time",errFuture:"Future dates are not allowed",noHist:"No locations.",del:"Remove",sure:"Sure? Press again",cleared:"Cleared. Enter a new location.",saved:"File saved.",dlFail:"Download didn't work here",
-nTiles:"Outside map images don't load in this preview. Press \"Google Earth\", or open the file / GitHub link in Chrome."}
+nTiles:"Map images aren't loading. Check the internet or pick another map above."}
 };
 var lang="hi";try{var _l=localStorage.getItem("tigerZoneLang");if(_l==="en"||_l==="hi")lang=_l;}catch(e){}
 function t(k,v){var s=(I18N[lang]&&I18N[lang][k])||I18N.hi[k]||k;if(v)Object.keys(v).forEach(function(n){s=s.split("{"+n+"}").join(v[n]);});return s;}
@@ -306,7 +396,9 @@ function applyStatic(){
   document.querySelectorAll(".lang button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.lang===lang));});
   $("soundBtn").textContent=t(soundOn?"soundOn":"soundOff");
   $("keyShow").textContent=t($("gKey").type==="password"?"keyShow":"keyHide");
-  $("labelsBtn").textContent=t(labelsOn?"labelsOn":"labelsOff");$("labelsBtn").setAttribute("aria-pressed",String(labelsOn));
+  if(typeof updateOverlays==="function")updateOverlays();
+  if(typeof geoLast!=="undefined"&&geoLast)geoStatus(geoLast.k,geoLast.v,geoLast.c,geoLast.alt);
+  if(typeof elevLast!=="undefined"&&elevLast)elevUI(elevLast.state,elevLast.res);
   var lt=AHEAD.filter(function(r){return r[0]===sel;})[0];$("maptag").textContent=sel?t("zoneAt",{x:t(lt[1])}):t("zoneNow");
 }
 
@@ -346,135 +438,239 @@ function dt(ms){var d=new Date(ms),L=lang==="hi"?"hi-IN":"en-IN";return d.toLoca
 function localInput(ms){var d=new Date(ms),p=function(n){return String(n).padStart(2,"0");};return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes());}
 var AHEAD=[[0,"a0"],[6,"a6"],[12,"a12"],[24,"a24"],[48,"a48"],[72,"a72"]];
 
-/* ---------- canvas map engine ---------- */
-var canvas=$("map"),ctx=canvas.getContext("2d"),wrap=$("mapwrap");
-var cw=300,ch=300,dpr=1,view={lat:20.8,lng:80.75,z:11},layer="sat",TILE=256,tiles={},tilesOk={},dirty=true;
-var SUB=["a","b","c"];function sd(x,y){return SUB[Math.abs(x+y)%3];}
-var LAYERS={
-  sat:{url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/"+z+"/"+y+"/"+x;},max:19,imgMax:18,attr:"Imagery © Esri, Maxar · Labels © OpenStreetMap, CARTO, Esri",
-       overlays:[{id:"roads",max:19,url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/"+z+"/"+y+"/"+x;}},
-                 {id:"names",max:20,url:function(z,x,y){return "https://"+sd(x,y)+".basemaps.cartocdn.com/rastertiles/dark_only_labels/"+z+"/"+x+"/"+y+(dpr>1?"@2x":"")+".png";}}]},
-  street:{url:function(z,x,y){return "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/"+z+"/"+y+"/"+x;},max:19,imgMax:19,attr:"© Esri, HERE, Garmin, OpenStreetMap"},
-  topo:{url:function(z,x,y){return "https://"+sd(x,y)+".tile.opentopomap.org/"+z+"/"+x+"/"+y+".png";},max:19,imgMax:17,attr:"© OpenStreetMap, SRTM · OpenTopoMap (CC-BY-SA)"},
-  osm:{url:function(z,x,y){return "https://tile.openstreetmap.org/"+z+"/"+x+"/"+y+".png";},max:19,imgMax:19,attr:"© OpenStreetMap contributors"},
-  google:{url:null,max:21,attr:""}
-};
-function project(lat,lng,z){var s=TILE*Math.pow(2,z),sn=Math.sin(Math.max(-85,Math.min(85,lat))*Math.PI/180);return {x:(lng+180)/360*s,y:(0.5-Math.log((1+sn)/(1-sn))/(4*Math.PI))*s};}
-function unproject(x,y,z){var s=TILE*Math.pow(2,z),n=Math.PI-2*Math.PI*y/s;return {lat:180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))),lng:x/s*360-180};}
-function toScreen(lat,lng){var c=project(view.lat,view.lng,view.z),p=project(lat,lng,view.z);return {x:p.x-c.x+cw/2,y:p.y-c.y+ch/2};}
-function toLL(sx,sy){var c=project(view.lat,view.lng,view.z);return unproject(c.x+sx-cw/2,c.y+sy-ch/2,view.z);}
-function kmPx(k,lat){return k*1000/(156543.03392*Math.cos(lat*Math.PI/180)/Math.pow(2,view.z));}
-function resize(){var r=wrap.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);cw=Math.max(1,r.width);ch=Math.max(1,r.height);canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);var f=$("fly");f.width=canvas.width;f.height=canvas.height;dirty=true;}
-var colors={};
-function readColors(){var cs=getComputedStyle(document.documentElement);["map-bg","map-grid","map-ink","inner","outer","accent","ink","bg"].forEach(function(k){colors[k]=cs.getPropertyValue("--"+k).trim()||"#888";});dirty=true;}
-function rgba(hex,a){var h=hex.replace("#","");if(h.length===3)h=h.split("").map(function(c){return c+c;}).join("");var n=parseInt(h,16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")";}
-var FONT="Noto Sans, system-ui, sans-serif";
-function getTile(id,urlFn,z,x,y){
-  var k=id+"/"+z+"/"+x+"/"+y,t=tiles[k];
-  if(!t){t=tiles[k]={img:new Image(),ok:false,bad:false};t.img.onload=function(){t.ok=true;tilesOk[id]=true;if(noteKind==="tiles")hideNote();dirty=true;};t.img.onerror=function(){t.bad=true;dirty=true;};t.img.src=urlFn(z,x,y);}
-  return t;
-}
-function drawLayer(id,urlFn,max,peek){
-  var zi=Math.max(1,Math.min(max,Math.floor(view.z+0.3))),sc=Math.pow(2,view.z-zi),c=project(view.lat,view.lng,zi),n=Math.pow(2,zi),drew=false;
-  var x0=Math.floor((c.x-cw/2/sc)/TILE),x1=Math.floor((c.x+cw/2/sc)/TILE),y0=Math.max(0,Math.floor((c.y-ch/2/sc)/TILE)),y1=Math.min(n-1,Math.floor((c.y+ch/2/sc)/TILE));
-  for(var ty=y0;ty<=y1;ty++)for(var tx=x0;tx<=x1;tx++){
-    var wx=((tx%n)+n)%n,dx=(tx*TILE-c.x)*sc+cw/2,dy=(ty*TILE-c.y)*sc+ch/2,sz=TILE*sc;
-    var tl=getTile(id,urlFn,zi,wx,ty);
-    if(tl.ok){ctx.drawImage(tl.img,dx,dy,sz+0.5,sz+0.5);drew=true;continue;}
-    if(peek&&zi>1){var pk=tiles[id+"/"+(zi-1)+"/"+(wx>>1)+"/"+(ty>>1)];if(pk&&pk.ok){ctx.drawImage(pk.img,(wx&1)*128,(ty&1)*128,128,128,dx,dy,sz+0.5,sz+0.5);drew=true;}}
-  }
-  return drew;
-}
+/* ---------- Leaflet map ---------- */
+var wrap=$("mapwrap"),cw=300,ch=300,dpr=1,layer="sat";
+var A=null,sel=0,pick=null,myLoc=null,grow=1,growT0=0,reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var labelsOn=true;try{if(localStorage.getItem("tigerZoneLabels")==="0")labelsOn=false;}catch(e){}
-function drawTiles(){
-  var L=LAYERS[layer];
-  var drew=drawLayer(layer,L.url,L.imgMax||L.max,true);
-  baseDrew=drew;
-  return drew;
+var colors={};
+function readColors(){var cs=getComputedStyle(document.documentElement);["inner","outer","accent","ink","bg"].forEach(function(k){colors[k]=cs.getPropertyValue("--"+k).trim()||"#888";});if(mapReady)drawZone();}
+var hasL=!!(window.L&&window.L.map),map=null,mapReady=false,BASE={},OVL={},V={layers:[]};
+var ATTR_OSM='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
+var SRC={
+  osm:{url:"https://tile.openstreetmap.org/{z}/{x}/{y}.png",o:{maxZoom:19,attribution:ATTR_OSM}},
+  street:{url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",o:{maxZoom:19,attribution:'Powered by <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a> | Esri, HERE, Garmin, '+ATTR_OSM}},
+  sat:{url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",o:{maxZoom:19,maxNativeZoom:18,attribution:'Powered by <a href="https://www.esri.com" target="_blank" rel="noopener">Esri</a> | Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'}},
+  s2:{url:"https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg",o:{maxZoom:19,maxNativeZoom:15,attribution:'<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2020)'}},
+  topo:{url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",o:{maxZoom:19,maxNativeZoom:17,subdomains:"abc",attribution:'Map data: '+ATTR_OSM+', SRTM | Style: &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)'}}
+};
+var BHUVAN_WMS="https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",BHUVAN_DEF="lulc:CG_LULC50K_1516";
+var bhuvanName=BHUVAN_DEF;try{bhuvanName=localStorage.getItem("tigerZoneBhuvanLayer")||BHUVAN_DEF;}catch(e){}
+var bhuvanOn=false,bhuvanStat="idle";
+var loadingSet={},tileStat={};
+function setLoading(n,on){if(on)loadingSet[n]=1;else delete loadingSet[n];$("mapLoading").hidden=flying||layer==="google"||!Object.keys(loadingSet).length;}
+function watch(tl,id){tileStat[id]={ok:0,err:0};
+  tl.on("loading",function(){setLoading(id,true);});
+  tl.on("load",function(){setLoading(id,false);});
+  tl.on("remove",function(){setLoading(id,false);});
+  tl.on("tileload",function(){tileStat[id].ok++;if(noteKind==="tiles"&&id===layer)hideNote();});
+  tl.on("tileerror",function(){tileStat[id].err++;});
+  return tl;}
+function initMap(){
+  if(!hasL){$("map").classList.add("nomap");$("map").textContent=t("nNoLib");return;}
+  map=L.map("map",{zoomControl:false,worldCopyJump:true,maxZoom:19,minZoom:3}).setView([20.8,80.75],11);
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+  L.control.scale({imperial:false,position:"bottomright"}).addTo(map);
+  map.createPane("thematic").style.zIndex=350;
+  map.createPane("forest").style.zIndex=380;
+  map.createPane("labels").style.zIndex=450;map.getPane("labels").style.pointerEvents="none";
+  Object.keys(SRC).forEach(function(k){BASE[k]=watch(L.tileLayer(SRC[k].url,SRC[k].o),k);});
+  var ESRI_REF="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/";
+  OVL.names=L.layerGroup([
+    watch(L.tileLayer(ESRI_REF+"World_Transportation/MapServer/tile/{z}/{y}/{x}",{pane:"labels",maxZoom:19,maxNativeZoom:18,attribution:'Roads &amp; labels: Esri, HERE, Garmin'}),"roads"),
+    watch(L.tileLayer(ESRI_REF+"World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",{pane:"labels",maxZoom:19,maxNativeZoom:18}),"places")
+  ]);
+  makeBhuvan();
+  map.on("click",function(e){$("info").hidden=true;showCoord(e.latlng);fillPick(e.latlng.lat,e.latlng.lng);});
+  map.on("mousemove",function(e){showCoord(e.latlng);});
+  map.on("mouseout",function(){if(A&&A.last)showCoord(A.last);});
+  map.on("movestart zoomstart",function(){$("info").hidden=true;});
+  map.on("zoomend",updateLabels);
+  mapReady=true;
 }
-var baseDrew=false;
-function drawOverlays(){
-  var L=LAYERS[layer];if(baseDrew&&layer==="sat"&&labelsOn&&L.overlays)L.overlays.forEach(function(o){drawLayer(o.id,o.url,o.max,false);});
+function makeBhuvan(){
+  if(!map)return;
+  if(OVL.bhuvan&&map.hasLayer(OVL.bhuvan))map.removeLayer(OVL.bhuvan);
+  bhuvanStat="idle";
+  OVL.bhuvan=watch(L.tileLayer.wms(BHUVAN_WMS,{layers:bhuvanName,format:"image/png",transparent:true,version:"1.1.1",opacity:0.6,pane:"thematic",maxZoom:19,attribution:'LULC &copy; <a href="https://bhuvan.nrsc.gov.in" target="_blank" rel="noopener">NRSC/ISRO Bhuvan</a>'}),"bhuvan");
+  OVL.bhuvan.on("loading",function(){if(bhuvanStat!=="ok"){bhuvanStat="loading";ovlStatus();}});
+  OVL.bhuvan.on("tileload",function(){if(bhuvanStat!=="ok"){bhuvanStat="ok";ovlStatus();}});
+  OVL.bhuvan.on("load",function(){if(bhuvanStat!=="ok"&&tileStat.bhuvan.err){bhuvanStat="err";ovlStatus();}});
 }
-function drawGrid(){
-  var tl=toLL(0,0),br=toLL(cw,ch),steps=[2,1,0.5,0.25,0.1,0.05,0.02,0.01,0.005],step=0.005;
-  for(var i=0;i<steps.length;i++){if(kmPx(steps[i]*111,view.lat)<120){step=i?steps[i-1]:steps[0];break;}}
-  var dec=step>=1?0:(step>=0.1?1:(step>=0.01?2:3));
-  ctx.save();ctx.strokeStyle=colors["map-grid"];ctx.lineWidth=1;ctx.fillStyle=colors["map-ink"];ctx.font="10px "+FONT;
-  for(var g=Math.ceil(tl.lng/step)*step;g<=br.lng;g+=step){var p=toScreen(view.lat,g);ctx.beginPath();ctx.moveTo(p.x,0);ctx.lineTo(p.x,ch);ctx.stroke();ctx.fillText(g.toFixed(dec)+"°E",p.x+3,ch-62);}
-  for(var a=Math.ceil(br.lat/step)*step;a<=tl.lat;a+=step){var q=toScreen(a,view.lng);ctx.beginPath();ctx.moveTo(0,q.y);ctx.lineTo(cw,q.y);ctx.stroke();ctx.fillText(a.toFixed(dec)+"°N",cw-56,q.y-3);}
-  ctx.restore();
+function toggleLayer(l,on){if(!map||!l)return;if(on&&!map.hasLayer(l))l.addTo(map);else if(!on&&map.hasLayer(l))map.removeLayer(l);}
+function updateOverlays(){
+  var showNames=labelsOn&&(layer==="sat"||layer==="s2");
+  toggleLayer(OVL.names,showNames);toggleLayer(OVL.bhuvan,bhuvanOn);toggleLayer(forestLayer,forestOn&&forest.state==="ok");
+  $("labelsBtn").hidden=!(layer==="sat"||layer==="s2"||layer==="google");$("labelsBtn").disabled=layer==="google";
+  $("labelsBtn").textContent=t(labelsOn?"labelsOn":"labelsOff");$("labelsBtn").setAttribute("aria-pressed",String(labelsOn));
+  $("forestBtn").disabled=forest.state!=="ok";$("forestBtn").textContent=forest.state!=="ok"?t("forestNA"):t(forestOn?"forestOn":"forestOff");$("forestBtn").setAttribute("aria-pressed",String(forestOn&&forest.state==="ok"));
+  $("bhuvanBtn").textContent=t(bhuvanOn?"bhuvanOn":"bhuvanOff");$("bhuvanBtn").setAttribute("aria-pressed",String(bhuvanOn));$("bhuvanBtn").disabled=!mapReady||layer==="google";
+  ovlStatus();
 }
-function ring(ll,k,fill,stroke,lw){var p=toScreen(ll.lat,ll.lng),r=kmPx(k,ll.lat);ctx.beginPath();ctx.arc(p.x,p.y,Math.max(0,r),0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw||2;ctx.stroke();}return {p:p,r:r};}
-function label(text,x,y,col){ctx.font="700 12px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";var w=ctx.measureText(text).width+14;ctx.fillStyle=col;ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x-w/2,y-11,w,22,11);else ctx.rect(x-w/2,y-11,w,22);ctx.fill();ctx.fillStyle="#fff";ctx.fillText(text,x,y+0.5);}
-function scaleBar(){var nice=[0.1,0.2,0.5,1,2,5,10,20,50,100],k=(cw*0.22)/kmPx(1,view.lat),v=nice[0];nice.forEach(function(n){if(n<=k)v=n;});var w=kmPx(v,view.lat),x=cw-w-14,y=ch-28;ctx.save();ctx.strokeStyle="#fff";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,y-6);ctx.lineTo(x,y);ctx.lineTo(x+w,y);ctx.lineTo(x+w,y-6);ctx.stroke();ctx.strokeStyle="#111";ctx.lineWidth=2;ctx.stroke();ctx.font="700 11px "+FONT;ctx.textAlign="center";ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.strokeText(v+" km",x+w/2,y-10);ctx.fillStyle="#111";ctx.fillText(v+" km",x+w/2,y-10);ctx.restore();}
-var A=null,Z=null,sel=0,pick=null,hits=[],grow=1,growT0=0,reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function ovlStatus(){
+  var parts=[];
+  var fs={none:"fNone",unverified:"fUnverified",invalid:"fInvalid",err:"fErr"}[forest.state];
+  if(forest.state==="ok")parts.push(t("fOk",{name:forest.meta.name||"",src:forest.meta.source,by:forest.meta.verified_by,on:forest.meta.verified_on}));
+  else if(fs)parts.push(t(fs));
+  if(bhuvanOn)parts.push(t({loading:"bLoading",ok:"bOk",err:"bErr",idle:"bLoading"}[bhuvanStat]));
+  $("ovlStatus").textContent=parts.join(" · ");
+}
+
+/* zone, route and markers */
+function northOf(p,k){return [p.lat+k/110.574,p.lng];}
+function divI(html){return L.divIcon({className:"tz-pin-wrap",html:html,iconSize:[0,0]});}
+function addV(l){l.addTo(map);V.layers.push(l);return l;}
+function clearV(){V.layers.forEach(function(l){map.removeLayer(l);});V={layers:[]};}
 function zone(){var r=A.reach(A.el+sel);return {inner:r.inner,outer:r.outer};}
-function draw(now){
-  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=colors["map-bg"];ctx.fillRect(0,0,cw,ch);
-  if(!drawTiles())drawGrid();
-  hits=[];
-  if(!(A&&A.last))drawOverlays();
-  if(growT0){var g=Math.min(1,(now-growT0)/1100);grow=1-Math.pow(1-g,3);if(g>=1)growT0=0;}
-  if(A&&A.last){
-    var L=A.last,z=zone();
-    var o=ring(L,z.outer*grow,rgba(colors.outer,0.16),colors.outer,3);
-    var n=ring(L,z.inner*grow,rgba(colors.inner,0.28),colors.inner,3);
-    drawOverlays();
-    if(!reduce&&grow===1){var ph=(now%2400)/2400;ring(L,z.outer*ph,null,rgba(colors.outer,0.9*(1-ph)),3);}
-    if(A.S.length>1){ctx.beginPath();A.S.forEach(function(p,i){var s=toScreen(p.lat,p.lng);i?ctx.lineTo(s.x,s.y):ctx.moveTo(s.x,s.y);});ctx.lineWidth=5;ctx.strokeStyle="rgba(255,255,255,.85)";ctx.lineCap="round";ctx.stroke();ctx.lineWidth=2.5;ctx.strokeStyle="#1E2B23";ctx.setLineDash([3,6]);ctx.stroke();ctx.setLineDash([]);}
-    A.S.forEach(function(p,i){if(i===A.S.length-1)return;var s=toScreen(p.lat,p.lng);ctx.beginPath();ctx.arc(s.x,s.y,9,0,Math.PI*2);ctx.fillStyle="#fff";ctx.fill();ctx.lineWidth=2;ctx.strokeStyle="#1E2B23";ctx.stroke();ctx.fillStyle="#1E2B23";ctx.font="700 10px "+FONT;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(String(i+1),s.x,s.y+0.5);hits.push({x:s.x,y:s.y,p:p,i:i});});
-    if(grow===1){
-      if(o.r>40)label("≤ "+km(z.outer)+" km",o.p.x,o.p.y-o.r,colors.outer);
-      if(n.r>40&&o.r-n.r>24)label(km(z.inner)+" km",n.p.x,n.p.y-n.r,"#946400");
-    }
-    var s=toScreen(L.lat,L.lng),pu=reduce?0:(now%1200)/1200;
-    if(!reduce){ctx.beginPath();ctx.arc(s.x,s.y,11+14*pu,0,Math.PI*2);ctx.fillStyle=rgba(colors.outer,0.4*(1-pu));ctx.fill();}
-    ctx.beginPath();ctx.arc(s.x,s.y,11,0,Math.PI*2);ctx.fillStyle=colors.outer;ctx.fill();ctx.lineWidth=3;ctx.strokeStyle="#fff";ctx.stroke();
-    hits.push({x:s.x,y:s.y,p:L,i:A.S.length-1});
-  }
-  if(pick){var q=toScreen(pick.lat,pick.lng);ctx.strokeStyle="#fff";ctx.lineWidth=5;ctx.beginPath();ctx.arc(q.x,q.y,13,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=colors.accent;ctx.lineWidth=2.5;ctx.stroke();ctx.beginPath();ctx.moveTo(q.x-8,q.y);ctx.lineTo(q.x+8,q.y);ctx.moveTo(q.x,q.y-8);ctx.lineTo(q.x,q.y+8);ctx.stroke();}
-  scaleBar();
+function drawZone(){
+  if(!mapReady)return;clearV();
+  if(myLoc){addV(L.circle([myLoc.lat,myLoc.lng],{radius:Math.max(myLoc.acc||0,5),color:"#2F6FD6",weight:1,fillColor:"#2F6FD6",fillOpacity:0.08,interactive:false}));
+    addV(L.marker([myLoc.lat,myLoc.lng],{icon:divI('<span class="tz-me"></span>'),interactive:false,keyboard:false,title:t("myLoc")}));}
+  if(pick)addV(L.marker([pick.lat,pick.lng],{icon:divI('<span class="tz-pick"></span>'),interactive:false,keyboard:false}));
+  if(!A||!A.last)return;
+  var P=A.last,c=[P.lat,P.lng],z=zone();
+  V.outer=addV(L.circle(c,{radius:Math.max(1,z.outer*1000*grow),color:colors.outer,weight:3,fillColor:colors.outer,fillOpacity:0.14,interactive:false}));
+  V.inner=addV(L.circle(c,{radius:Math.max(1,z.inner*1000*grow),color:colors.inner,weight:3,fillColor:colors.inner,fillOpacity:0.26,interactive:false}));
+  if(!reduce)V.pulse=addV(L.circle(c,{radius:1,color:colors.outer,weight:3,fill:false,opacity:0,interactive:false}));
+  if(A.S.length>1){var ll=A.S.map(function(p){return [p.lat,p.lng];});
+    addV(L.polyline(ll,{color:"#fff",weight:5,opacity:0.85,interactive:false}));
+    addV(L.polyline(ll,{color:"#1E2B23",weight:2.5,dashArray:"3 6",interactive:false}));}
+  A.S.forEach(function(p,i){var last=i===A.S.length-1;
+    var m=addV(L.marker([p.lat,p.lng],{icon:divI('<span class="tz-pin'+(last?" last":"")+'">'+(i+1)+'</span>'),zIndexOffset:last?1000:0,keyboard:false,title:(last?t("lastLoc"):t("locN",{n:i+1}))}));
+    m.on("click",function(e){if(e.originalEvent)L.DomEvent.stopPropagation(e.originalEvent);showInfo(p,i);});});
+  V.lblO=addV(L.marker(northOf(P,z.outer),{icon:divI('<span class="ring-lbl o">≤ '+km(z.outer)+' km</span>'),interactive:false,keyboard:false}));
+  V.lblI=addV(L.marker(northOf(P,z.inner),{icon:divI('<span class="ring-lbl i">'+km(z.inner)+' km</span>'),interactive:false,keyboard:false}));
+  updateLabels();
 }
-function loop(now){if(layer!=="google"&&(!reduce||dirty||growT0)){draw(now);dirty=false;}if(flying)flyFrame(now);requestAnimationFrame(loop);}
-function zoomAt(sx,sy,nz){nz=Math.max(3,Math.min(20,nz));var ll=toLL(sx,sy),p=project(ll.lat,ll.lng,nz),c=unproject(p.x-(sx-cw/2),p.y-(sy-ch/2),nz);view={lat:c.lat,lng:c.lng,z:nz};dirty=true;$("info").hidden=true;}
-function fit(){
-  if(!A||!A.last)return;var z=zone(),pts=A.S.slice(),L=A.last,r=Math.max(z.outer,1.5),dl=r/110.574,dg=r/(111.32*Math.cos(L.lat*Math.PI/180));
-  pts.push({lat:L.lat+dl,lng:L.lng+dg},{lat:L.lat-dl,lng:L.lng-dg});
-  var la=pts.map(function(p){return p.lat;}),lo=pts.map(function(p){return p.lng;}),N=Math.max.apply(null,la),S=Math.min.apply(null,la),E=Math.max.apply(null,lo),W=Math.min.apply(null,lo),zz=17;
-  for(;zz>3;zz-=0.25){var a=project(N,W,zz),b=project(S,E,zz);if(b.x-a.x<=cw-60&&b.y-a.y<=ch-190)break;}
-  var a2=project(N,W,zz),b2=project(S,E,zz),m=unproject((a2.x+b2.x)/2,(a2.y+b2.y)/2-22,zz);view={lat:m.lat,lng:m.lng,z:zz};dirty=true;
+function updateLabels(){
+  if(!V.lblO||!A||!A.last)return;
+  var z=zone(),c=map.latLngToContainerPoint([A.last.lat,A.last.lng]),ro=c.y-map.latLngToContainerPoint(northOf(A.last,z.outer)).y,ri=c.y-map.latLngToContainerPoint(northOf(A.last,z.inner)).y,done=grow===1;
+  V.lblO.setOpacity(done&&ro>40?1:0);V.lblI.setOpacity(done&&ri>40&&ro-ri>26?1:0);
+}
+function showInfo(p,i){
+  var info=$("info"),last=i===A.S.length-1,pt=map.latLngToContainerPoint([p.lat,p.lng]);
+  info.innerHTML="<b>"+(last?t("lastLoc"):t("locN",{n:i+1}))+"</b><br>"+esc(dt(p.t))+"<br><span class=mono>"+fmt(p.lat,5)+", "+fmt(p.lng,5)+"</span>"+(p.el!=null?"<br>"+t("elevShort")+": "+Math.round(p.el)+" "+t("mUnit"):"");
+  info.hidden=false;var w=info.offsetWidth,hh=info.offsetHeight;
+  info.style.left=Math.max(6,Math.min(cw-w-6,pt.x-w/2))+"px";info.style.top=(pt.y-hh-18<60?pt.y+18:pt.y-hh-18)+"px";
+}
+function animateZone(now){
+  if(!mapReady||!V.outer||!A||!A.last||layer==="google")return;
+  var z=zone();
+  if(growT0){var g=Math.min(1,(now-growT0)/1100);grow=1-Math.pow(1-g,3);
+    V.outer.setRadius(Math.max(1,z.outer*1000*grow));V.inner.setRadius(Math.max(1,z.inner*1000*grow));
+    if(g>=1){growT0=0;grow=1;updateLabels();}}
+  if(V.pulse){if(grow===1){var ph=(now%2400)/2400;V.pulse.setRadius(Math.max(1,z.outer*1000*ph));V.pulse.setStyle({opacity:0.9*(1-ph)});}else V.pulse.setStyle({opacity:0});}
+}
+function startGrow(){grow=0;growT0=performance.now();drawZone();}
+function loop(now){if(flying)flyFrame(now);animateZone(now);requestAnimationFrame(loop);}
+function fit(animate){
   if(layer==="google")gFit();
+  if(!mapReady||!A||!A.last)return;
+  var z=zone(),P=A.last,r=Math.max(z.outer,1.5),dl=r/110.574,dg=r/(111.32*Math.cos(P.lat*Math.PI/180));
+  var b=L.latLngBounds([[P.lat-dl,P.lng-dg],[P.lat+dl,P.lng+dg]]);A.S.forEach(function(p){b.extend([p.lat,p.lng]);});
+  map.fitBounds(b,{paddingTopLeft:[20,cw<560?140:115],paddingBottomRight:[20,70],maxZoom:17,animate:!!animate});
 }
-var ptr={},gest=null;
-canvas.addEventListener("pointerdown",function(e){canvas.setPointerCapture(e.pointerId);ptr[e.pointerId]={x:e.offsetX,y:e.offsetY};var ids=Object.keys(ptr);
-  if(ids.length===1)gest={type:"pan",lx:e.offsetX,ly:e.offsetY,moved:0,t:Date.now()};
-  else if(ids.length===2){var a=ptr[ids[0]],b=ptr[ids[1]];gest={type:"pinch",d:Math.hypot(a.x-b.x,a.y-b.y),z:view.z,moved:99};}});
-canvas.addEventListener("pointermove",function(e){if(!ptr[e.pointerId]||!gest)return;ptr[e.pointerId]={x:e.offsetX,y:e.offsetY};
-  if(gest.type==="pan"){var dx=e.offsetX-gest.lx,dy=e.offsetY-gest.ly;gest.lx=e.offsetX;gest.ly=e.offsetY;gest.moved+=Math.abs(dx)+Math.abs(dy);var c=project(view.lat,view.lng,view.z),n=unproject(c.x-dx,c.y-dy,view.z);view.lat=n.lat;view.lng=n.lng;dirty=true;if(gest.moved>6)$("info").hidden=true;}
-  else{var ids=Object.keys(ptr);if(ids.length<2)return;var a=ptr[ids[0]],b=ptr[ids[1]];zoomAt((a.x+b.x)/2,(a.y+b.y)/2,gest.z+Math.log2(Math.hypot(a.x-b.x,a.y-b.y)/gest.d));}});
-function endPtr(e){if(!ptr[e.pointerId])return;delete ptr[e.pointerId];if(gest&&gest.type==="pan"&&gest.moved<6&&Date.now()-gest.t<600)tap(e.offsetX,e.offsetY);
-  if(!Object.keys(ptr).length)gest=null;else if(gest&&gest.type==="pinch"){var id=Object.keys(ptr)[0];gest={type:"pan",lx:ptr[id].x,ly:ptr[id].y,moved:99,t:0};}}
-canvas.addEventListener("pointerup",endPtr);canvas.addEventListener("pointercancel",endPtr);
-canvas.addEventListener("wheel",function(e){e.preventDefault();zoomAt(e.offsetX,e.offsetY,view.z-e.deltaY*0.0022);},{passive:false});
-$("zin").onclick=function(){if(layer==="google"&&gm.map){gm.map.setZoom(gm.map.getZoom()+1);return;}zoomAt(cw/2,ch/2,view.z+1);};
-$("zout").onclick=function(){if(layer==="google"&&gm.map){gm.map.setZoom(gm.map.getZoom()-1);return;}zoomAt(cw/2,ch/2,view.z-1);};
-$("zfit").onclick=fit;
-function fillPick(lat,lng){pick={lat:lat,lng:lng};dirty=true;$("qLat").value=fmt(lat,5);$("qLng").value=fmt(lng,5);$("eLat").textContent="";$("eLng").textContent="";toast(t("picked"));}
-function tap(x,y){
-  var best=null;hits.forEach(function(h){var d=Math.hypot(h.x-x,h.y-y);if(d<16&&(!best||d<best.d))best={h:h,d:d};});
-  var info=$("info");
-  if(best){var h=best.h,last=h.i===A.S.length-1;info.innerHTML="<b>"+(last?t("lastLoc"):t("locN",{n:h.i+1}))+"</b><br>"+esc(dt(h.p.t))+"<br><span class=mono>"+fmt(h.p.lat,4)+", "+fmt(h.p.lng,4)+"</span>";info.hidden=false;
-    var w=info.offsetWidth,hh=info.offsetHeight;info.style.left=Math.max(6,Math.min(cw-w-6,x-w/2))+"px";info.style.top=(y-hh-16<60?y+16:y-hh-16)+"px";return;}
-  info.hidden=true;var ll=toLL(x,y);showCoord(ll);fillPick(ll.lat,ll.lng);
+function resize(){var r=wrap.getBoundingClientRect();dpr=Math.min(window.devicePixelRatio||1,2);cw=Math.max(1,r.width);ch=Math.max(1,r.height);var f=$("fly");f.width=Math.round(cw*dpr);f.height=Math.round(ch*dpr);if(mapReady)map.invalidateSize();}
+$("zin").onclick=function(){if(layer==="google"&&gm.map){gm.map.setZoom(gm.map.getZoom()+1);return;}if(mapReady)map.zoomIn();};
+$("zout").onclick=function(){if(layer==="google"&&gm.map){gm.map.setZoom(gm.map.getZoom()-1);return;}if(mapReady)map.zoomOut();};
+$("zfit").onclick=function(){fit(true);};
+function fillPick(lat,lng){pick={lat:lat,lng:lng};$("qLat").value=fmt(lat,6);$("qLng").value=fmt(lng,6);$("eLat").textContent="";$("eLng").textContent="";drawZone();if(layer==="google")gDraw(true);fetchElevation(lat,lng);toast(t("picked"));}
+
+/* ---------- elevation (Open-Meteo, fallback OpenTopoData) ---------- */
+var elevCache={},elevSeq=0;
+function llKey(lat,lng){return fmt(lat,5)+","+fmt(lng,5);}
+function timedFetch(url,ms){var c=window.AbortController?new AbortController():null,tm=setTimeout(function(){if(c)c.abort();},ms);
+  return fetch(url,c?{signal:c.signal}:{}).then(function(r){clearTimeout(tm);if(!r.ok)throw new Error("http "+r.status);return r.json();},function(e){clearTimeout(tm);throw e;});}
+function num(v){return typeof v==="number"&&isFinite(v)?v:null;}
+var elevLast=null;
+function elevUI(state,res){
+  elevLast={state:state,res:res};
+  $("elevSpin").hidden=state!=="busy";
+  if(state==="busy"){$("qElev").value="";$("elevSrc").textContent=t("elevBusy");return;}
+  if(state==="clear"){$("qElev").value="";$("elevSrc").textContent="";return;}
+  if(res&&res.m!=null){$("qElev").value=fmt(res.m,0)+" "+t("mUnit");$("elevSrc").textContent=t("elevFrom",{src:res.src});}
+  else{$("qElev").value=t("elevNA");$("elevSrc").textContent=t(res&&res.reason==="nodata"?"elevNone":"elevFail");}
 }
+function fetchElevation(lat,lng){
+  var k=llKey(lat,lng),my=++elevSeq;
+  if(elevCache[k]){elevUI("done",elevCache[k]);return Promise.resolve(elevCache[k]);}
+  if(!window.fetch){elevUI("done",{m:null,reason:"fail"});return Promise.resolve(null);}
+  elevUI("busy");
+  var q="latitude="+fmt(lat,5)+"&longitude="+fmt(lng,5);
+  return timedFetch("https://api.open-meteo.com/v1/elevation?"+q,9000).then(function(j){
+      var m=num(j&&j.elevation&&j.elevation[0]);if(m===null)throw new Error("nodata");
+      return {m:m,src:"Copernicus DEM GLO-90 (90 m) · Open-Meteo"};})
+    .catch(function(){return timedFetch("https://api.opentopodata.org/v1/srtm30m?locations="+fmt(lat,5)+","+fmt(lng,5),9000).then(function(j){
+      var r=j&&j.results&&j.results[0],m=num(r&&r.elevation);if(m===null)return {m:null,reason:"nodata"};
+      return {m:m,src:"SRTM 30 m · OpenTopoData"};});})
+    .catch(function(){return {m:null,reason:"fail"};})
+    .then(function(res){if(res.m!=null||res.reason==="nodata")elevCache[k]=res;if(my===elevSeq)elevUI("done",res);return res;});
+}
+var elevTimer=null;
+function maybeElev(){clearTimeout(elevTimer);var la=parseFloat(String($("qLat").value).replace(",",".")),lo=parseFloat(String($("qLng").value).replace(",","."));
+  if(isNaN(la)||isNaN(lo)||la<-90||la>90||lo<-180||lo>180){elevSeq++;elevUI("clear");return;}
+  elevTimer=setTimeout(function(){fetchElevation(la,lo);},700);}
+
+/* ---------- current location (browser Geolocation API) ---------- */
+var geoLast=null;
+function geoStatus(k,v,c,alt){geoLast={k:k,v:v,c:c,alt:alt};var el=$("geoStatus");el.textContent=k?t(k,v)+(alt!=null?t("gAlt",{alt:alt}):""):"";el.className="status"+(c?" "+c:"");}
+$("geoBtn").onclick=function(){
+  var b=this;
+  if(!("geolocation" in navigator)){geoStatus("gNoSupport",null,"bad");return;}
+  if(window.isSecureContext===false){geoStatus("gInsecure",null,"bad");return;}
+  b.disabled=true;$("geoSpin").hidden=false;geoStatus("gBusy",null,"");
+  navigator.geolocation.getCurrentPosition(function(pos){
+    b.disabled=false;$("geoSpin").hidden=true;
+    var c=pos.coords,lat=c.latitude,lng=c.longitude,acc=Math.round(c.accuracy||0);
+    $("qLat").value=fmt(lat,6);$("qLng").value=fmt(lng,6);$("eLat").textContent="";$("eLng").textContent="";
+    var chip=document.querySelector('.chip[data-h="0"]');if(chip)chip.click();
+    myLoc={lat:lat,lng:lng,acc:acc};pick=null;
+    geoStatus("gOk",{acc:acc},"good",num(c.altitude)!==null?Math.round(c.altitude):null);
+    fetchElevation(lat,lng);
+    if(mapReady){drawZone();map.setView([lat,lng],Math.max(map.getZoom(),15));}
+    if(layer==="google")gDraw(true);
+  },function(err){
+    b.disabled=false;$("geoSpin").hidden=true;
+    geoStatus(err&&err.code===1?"gDenied":err&&err.code===3?"gTimeout":"gUnavail",null,"bad");
+  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+};
+
+/* ---------- verified forest boundary (data/forest-boundary.geojson) ---------- */
+var forest={state:"checking",data:null,meta:null},forestLayer=null,forestOn=true;
+try{if(localStorage.getItem("tigerZoneForest")==="0")forestOn=false;}catch(e){}
+function eachPoly(g,fn){if(!g)return;
+  if(g.type==="FeatureCollection")(g.features||[]).forEach(function(f){eachPoly(f,fn);});
+  else if(g.type==="Feature")eachPoly(g.geometry,fn);
+  else if(g.type==="Polygon")fn(g.coordinates);
+  else if(g.type==="MultiPolygon")g.coordinates.forEach(fn);
+  else if(g.type==="GeometryCollection")(g.geometries||[]).forEach(function(x){eachPoly(x,fn);});}
+function pip(p,ring){var x=p.lng,y=p.lat,ins=false;for(var i=0,j=ring.length-1;i<ring.length;j=i++){var xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))ins=!ins;}return ins;}
+function inForest(p){if(forest.state!=="ok")return null;var hit=false;eachPoly(forest.data,function(rings){if(hit||!rings||!rings[0])return;if(pip(p,rings[0])){for(var i=1;i<rings.length;i++)if(pip(p,rings[i]))return;hit=true;}});return hit;}
+function loadForest(){
+  if(!window.fetch||location.protocol==="file:"){forest.state="none";updateOverlays();return;}
+  fetch("data/forest-boundary.geojson",{cache:"no-cache"}).then(function(r){if(r.status===404)throw "none";if(!r.ok)throw "err";return r.json().catch(function(){throw "invalid";});})
+  .then(function(j){
+    var polys=0;eachPoly(j,function(){polys++;});
+    if(!j||!/^(FeatureCollection|Feature)$/.test(j.type)||!polys)throw "invalid";
+    var m=j.metadata||{};
+    if(!m.source||!m.verified_by||!m.verified_on){forest.state="unverified";return;}
+    forest.state="ok";forest.data=j;forest.meta=m;
+    if(hasL&&map)forestLayer=L.geoJSON(j,{pane:"forest",interactive:false,style:{color:"#1F7A3A",weight:2.5,dashArray:"6 4",fillColor:"#2E9E52",fillOpacity:0.08}});
+  })
+  .catch(function(e){forest.state=(e==="none"||e==="invalid")?e:"err";})
+  .then(function(){updateOverlays();render();});
+}
+$("forestBtn").onclick=function(){if(forest.state!=="ok")return;forestOn=!forestOn;try{localStorage.setItem("tigerZoneForest",forestOn?"1":"0");}catch(e){}updateOverlays();};
+$("bhuvanBtn").onclick=function(){bhuvanOn=!bhuvanOn;if(bhuvanOn&&bhuvanStat==="err")makeBhuvan();updateOverlays();};
+$("bApply").onclick=function(){var v=$("bLayer").value.trim()||BHUVAN_DEF;bhuvanName=v;$("bLayer").value=v;try{localStorage.setItem("tigerZoneBhuvanLayer",v);}catch(e){}makeBhuvan();bhuvanOn=true;updateOverlays();};
 
 /* ---------- notes ---------- */
 var noteKind=null,noteClosed={};
 function showNote(kind,text){if(noteClosed[kind]||flying)return;noteKind=kind;$("mapnoteText").textContent=text;$("mapnote").hidden=false;}
 function hideNote(){noteKind=null;$("mapnote").hidden=true;}
 $("mapnoteX").onclick=function(){if(noteKind)noteClosed[noteKind]=true;hideNote();};
-function checkTiles(){var L=layer;setTimeout(function(){if(layer===L&&L!=="google"&&!tilesOk[L])showNote("tiles",t("nTiles"));},4000);}
+function checkTiles(){var l=layer;setTimeout(function(){if(layer!==l||l==="google"||!mapReady||!tileStat[l]||tileStat[l].ok)return;
+  if(l==="osm"&&tileStat.street&&!tileStat.street.err){setLayer("street",true);showNote("osmfb",t("nOsmFb"));return;}
+  showNote("tiles",t("nTiles"));},7000);}
 
 /* ---------- Google Maps ---------- */
 var BUILTIN_GKEY="";
@@ -496,14 +692,14 @@ function loadGoogle(){
 function gFail(){setKeyStatus(t("kFail"),"bad");showNote("gfail",t("kFail"));if(layer==="google")setLayer("sat",true);}
 function useGoogle(){
   if(!gm.key){showNote("nokey",t("nNoKey"));$("setBox").open=true;setLayer("sat",true);return;}
-  $("map").style.visibility="hidden";$("gmap").hidden=false;$("attr").hidden=true;$("labelsBtn").hidden=true;
+  $("map").style.visibility="hidden";$("gmap").hidden=false;setLoading("x",false);updateOverlays();
   if(noteKind==="tiles"||noteKind==="nokey"||noteKind==="gfail")hideNote();
   if(gm.state!=="ready")setKeyStatus(t("kLoading"),"");
   loadGoogle().then(function(){
     setKeyStatus(t("kOk"),"good");
     if(!gm.map){
       var G=window.google.maps;
-      gm.map=new G.Map($("gmap"),{center:{lat:view.lat,lng:view.lng},zoom:Math.round(view.z),mapTypeId:"hybrid",gestureHandling:"greedy",
+      var gc=mapReady?map.getCenter():{lat:20.8,lng:80.75};gm.map=new G.Map($("gmap"),{center:{lat:gc.lat,lng:gc.lng},zoom:mapReady?Math.round(map.getZoom()):11,mapTypeId:"hybrid",gestureHandling:"greedy",
         mapTypeControl:false,streetViewControl:false,fullscreenControl:false,zoomControl:false,rotateControl:false,scaleControl:true,clickableIcons:false});
       gm.map.addListener("click",function(e){if(!e.latLng)return;var ll={lat:e.latLng.lat(),lng:e.latLng.lng()};showCoord(ll);fillPick(ll.lat,ll.lng);gDraw(true);});
       gm.map.addListener("mousemove",function(e){if(e.latLng)showCoord({lat:e.latLng.lat(),lng:e.latLng.lng()});});
@@ -542,14 +738,16 @@ $("keyForm").addEventListener("submit",function(e){e.preventDefault();var k=$("g
 $("keyShow").onclick=function(){var i=$("gKey");i.type=i.type==="password"?"text":"password";this.textContent=t(i.type==="password"?"keyShow":"keyHide");};
 $("keyClear").onclick=function(){gm.key="";$("gKey").value="";try{localStorage.removeItem("tigerZoneGKey");}catch(_){}setKeyStatus(t("kRemoved"),"");$("gBtn").hidden=true;if(layer==="google")setLayer("sat",true);};
 function setLayer(l,auto){
-  layer=l;document.querySelectorAll(".seg button").forEach(function(o){o.setAttribute("aria-pressed",String(o.dataset.layer===l));});
+  if(l!=="google"&&!SRC[l])l="sat";
+  layer=l;document.querySelectorAll(".mtop .seg button").forEach(function(o){o.setAttribute("aria-pressed",String(o.dataset.layer===(l==="street"?"osm":l)));});
   if(!auto){try{localStorage.setItem("tigerZoneLayer",l);}catch(e){}}
   if(l==="google"){useGoogle();return;}
-  $("gmap").hidden=true;$("map").style.visibility="visible";$("attr").hidden=false;
-  if(noteKind==="nokey"||noteKind==="gfail")hideNote();
-  $("attr").textContent=LAYERS[l].attr;$("labelsBtn").hidden=l!=="sat";dirty=true;checkTiles();
+  $("gmap").hidden=true;$("map").style.visibility="visible";
+  if(noteKind==="nokey"||noteKind==="gfail"||(noteKind==="tiles"))hideNote();
+  if(mapReady){Object.keys(BASE).forEach(function(k){if(k!==l)toggleLayer(BASE[k],false);});toggleLayer(BASE[l],true);map.invalidateSize();checkTiles();}
+  updateOverlays();
 }
-document.querySelectorAll(".seg button").forEach(function(b){b.onclick=function(){setLayer(b.dataset.layer);};});
+document.querySelectorAll(".mtop .seg button").forEach(function(b){b.onclick=function(){setLayer(b.dataset.layer);};});
 
 /* ---------- space to earth fly-in ---------- */
 var fly=$("fly"),fctx=fly.getContext("2d"),flying=false,flyT0=0,flyTarget=null,flyDone=null,stars=[];
@@ -566,7 +764,7 @@ function ease(t){t=Math.max(0,Math.min(1,t));return t<0.5?4*t*t*t:1-Math.pow(-2*
 function ortho(lat,lng,lat0,lng0,R,cx,cy){var r=Math.PI/180,p=lat*r,l=lng*r,p0=lat0*r,l0=lng0*r,cosc=Math.sin(p0)*Math.sin(p)+Math.cos(p0)*Math.cos(p)*Math.cos(l-l0);var x=Math.cos(p)*Math.sin(l-l0),y=Math.cos(p0)*Math.sin(p)-Math.sin(p0)*Math.cos(p)*Math.cos(l-l0);if(cosc<0){var m=Math.hypot(x,y)||1;x/=m;y/=m;}return {x:cx+R*x,y:cy-R*y,v:cosc>=0};}
 function poly(pts,lat0,lng0,R,cx,cy){fctx.beginPath();pts.forEach(function(q,i){var s=ortho(q[0],q[1],lat0,lng0,R,cx,cy);i?fctx.lineTo(s.x,s.y):fctx.moveTo(s.x,s.y);});fctx.closePath();}
 function startFly(target,done){flyTarget=target;flyDone=done;if(reduce){done();return;}fly.hidden=false;$("skipFly").hidden=false;hideNote();flying=true;flyT0=performance.now();}
-function endFly(){if(!flying)return;flying=false;fly.hidden=true;$("skipFly").hidden=true;var d=flyDone;flyDone=null;if(d)d();}
+function endFly(){if(!flying)return;flying=false;fly.hidden=true;$("skipFly").hidden=true;setLoading("x",false);if(mapReady)map.invalidateSize();var d=flyDone;flyDone=null;if(d)d();}
 $("skipFly").onclick=endFly;
 function flyFrame(now){
   var t=(now-flyT0)/1000,W=cw,H=ch,cx=W/2,cy=H/2,R0=Math.min(W,H)*0.3,T=flyTarget;
@@ -610,12 +808,10 @@ function beep(f,d,delay){var a=audio();if(!a)return;var t=a.currentTime+(delay||
 function titi(){if(!soundOn)return;beep(1175,0.1,0);beep(1175,0.1,0.16);beep(1568,0.18,0.32);}
 function scanSound(){if(!soundOn)return;for(var i=0;i<6;i++)beep(660+i*60,0.05,i*0.3);}
 function tick(){if(soundOn)beep(988,0.06,0);}
-$("labelsBtn").onclick=function(){labelsOn=!labelsOn;try{localStorage.setItem("tigerZoneLabels",labelsOn?"1":"0");}catch(e){}this.textContent=t(labelsOn?"labelsOn":"labelsOff");this.setAttribute("aria-pressed",String(labelsOn));dirty=true;};
+$("labelsBtn").onclick=function(){labelsOn=!labelsOn;try{localStorage.setItem("tigerZoneLabels",labelsOn?"1":"0");}catch(e){}updateOverlays();};
 $("copyMail").onclick=function(){var b=this,m="hexorhexor66@gmail.com";function sel(){var r=document.createRange();r.selectNodeContents($("mailTxt"));var g=window.getSelection();g.removeAllRanges();g.addRange(r);toast(t("selected"));}
   try{navigator.clipboard.writeText(m).then(function(){toast(t("copied"));},sel);}catch(e){sel();}};
-function showCoord(ll){$("coord").textContent=fmt(ll.lat,5)+"°N, "+fmt(ll.lng,5)+"°E";}
-canvas.addEventListener("pointermove",function(e){if(e.pointerType==="mouse"&&!gest)showCoord(toLL(e.offsetX,e.offsetY));});
-canvas.addEventListener("pointerleave",function(){if(A&&A.last)showCoord(A.last);});
+function showCoord(ll){$("coord").textContent=fmt(ll.lat,6)+"°N, "+fmt(ll.lng,6)+"°E";}
 $("soundBtn").onclick=function(){soundOn=!soundOn;this.setAttribute("aria-pressed",String(soundOn));this.textContent=t(soundOn?"soundOn":"soundOff");if(soundOn){audio();beep(880,0.1,0);}};
 
 /* ---------- render ---------- */
@@ -624,30 +820,33 @@ function renderTable(){
   var now=Date.now();
   $("tbl").innerHTML=AHEAD.map(function(r){var z=A.reach(A.el+r[0]);return "<tr data-h=\""+r[0]+"\" tabindex=\"0\""+(r[0]===sel?" class=\"sel\" aria-selected=\"true\"":"")+"><td><span class=\"when-t\">"+t(r[1])+"</span>"+(r[0]?"<small>"+t("later")+"</small>":"<small>"+esc(t("since",{d:dur(A.el)}))+"</small>")+"<small class=\"d-m\">"+esc(dt(now+r[0]*HR))+"</small>"+"</td><td>"+esc(dt(now+r[0]*HR))+"</td><td class=\"r\"><span class=\"km-in\">"+km(z.inner)+" km</span></td><td class=\"r\"><span class=\"km-out\">"+km(z.outer)+" km</span></td><td class=\"r\"><span class=\"view\">"+t(r[0]===sel?"onMapSel":"onMap")+"</span></td></tr>";}).join("");
 }
-function pickRow(h){sel=h;renderTable();var lt=AHEAD.filter(function(r){return r[0]===h;})[0];$("maptag").textContent=h?t("zoneAt",{x:t(lt[1])}):t("zoneNow");grow=0;growT0=performance.now();fit();dirty=true;if(layer==="google")gDraw();tick();}
+function pickRow(h){sel=h;renderTable();var lt=AHEAD.filter(function(r){return r[0]===h;})[0];$("maptag").textContent=h?t("zoneAt",{x:t(lt[1])}):t("zoneNow");startGrow();fit(true);if(layer==="google")gDraw();tick();}
 $("tbl").addEventListener("click",function(e){var tr=e.target.closest("tr[data-h]");if(tr){pickRow(+tr.dataset.h);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}});
 $("tbl").addEventListener("keydown",function(e){if(e.key!=="Enter"&&e.key!==" ")return;var tr=e.target.closest("tr[data-h]");if(tr){e.preventDefault();pickRow(+tr.dataset.h);}});
 function render(){
-  A=analyze(Date.now());dirty=true;
+  A=analyze(Date.now());
   $("sampleNote").hidden=!state.sample;$("clearOld").closest(".oldbar").hidden=!state.points.length;
   if(!A.last){$("dialN").textContent="–";$("headline").textContent=t("noLoc");$("subline").textContent="";}
   else{
     $("dialN").textContent=km(A.inner);
     $("headline").innerHTML=t("headline",{km:km(A.outer)});
-    $("subline").textContent=t("subline",{t:dt(A.last.t),ago:dur(A.el),ll:fmt(A.last.lat,4)+", "+fmt(A.last.lng,4)});
+    var extra=(A.last.el!=null?" · "+t("elevShort")+" "+Math.round(A.last.el)+" "+t("mUnit"):""),inF=inForest(A.last);
+    if(inF!==null)extra+=" · "+t(inF?"inF":"outF");
+    $("subline").textContent=t(A.el<1?"sublineNow":"subline",{t:dt(A.last.t),ago:dur(A.el),ll:fmt(A.last.lat,5)+", "+fmt(A.last.lng,5)})+extra;
     var la=fmt(A.last.lat,5),lo=fmt(A.last.lng,5);showCoord(A.last);
     $("earthLink").href="https://earth.google.com/web/@"+la+","+lo+",300a,"+Math.round(Math.max(A.outer,2)*2600)+"d,35y,0h,0t,0r";
   }
   renderTable();
   $("histCount").textContent=A.S.length;
-  $("hist").innerHTML=A.S.map(function(p,i){return {h:"<li"+(i===A.S.length-1?" class=\"last\"":"")+"><span class=\"num\">"+(i+1)+"</span><span>"+esc(dt(p.t))+"<small class=\"mono\">"+fmt(p.lat,4)+", "+fmt(p.lng,4)+"</small></span><button type=\"button\" class=\"x\" data-del=\""+esc(p.id)+"\">"+t("del")+"</button></li>"};}).reverse().map(function(r){return r.h;}).join("")||"<li style=\"grid-template-columns:1fr\">"+t("noHist")+"</li>";
+  $("hist").innerHTML=A.S.map(function(p,i){return {h:"<li"+(i===A.S.length-1?" class=\"last\"":"")+"><span class=\"num\">"+(i+1)+"</span><span>"+esc(dt(p.t))+"<small class=\"mono\">"+fmt(p.lat,5)+", "+fmt(p.lng,5)+(p.el!=null?" · "+Math.round(p.el)+" "+t("mUnit"):"")+"</small></span><button type=\"button\" class=\"x\" data-del=\""+esc(p.id)+"\">"+t("del")+"</button></li>"};}).reverse().map(function(r){return r.h;}).join("")||"<li style=\"grid-template-columns:1fr\">"+t("noHist")+"</li>";
   ["avg","max"].forEach(function(k){var el=$("set"+(k==="avg"?"Avg":"Max"));if(document.activeElement!==el)el.value=state.set[k];});
+  if(!growT0)drawZone();
 }
 
 /* ---------- form ---------- */
 var whenH=0;
 document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){document.querySelectorAll(".chip").forEach(function(o){o.setAttribute("aria-pressed",String(o===c));});whenH=c.dataset.h;$("customWhen").hidden=whenH!=="custom";if(whenH==="custom"&&!$("customWhen").value)$("customWhen").value=localInput(Date.now()-24*HR);$("eWhen").textContent="";};});
-["qLat","qLng"].forEach(function(id){$(id).addEventListener("input",function(){$(id==="qLat"?"eLat":"eLng").textContent="";});});
+["qLat","qLng"].forEach(function(id){$(id).addEventListener("input",function(){$(id==="qLat"?"eLat":"eLng").textContent="";maybeElev();});});
 function parseNum(id,min,max,err,name){var raw=String($(id).value).trim().replace(",","."),v=parseFloat(raw);if(!raw||isNaN(v)||v<min||v>max){$(err).textContent=t("errNum",{name:t(name),min:min,max:max});return null;}return v;}
 $("qForm").addEventListener("submit",function(e){
   e.preventDefault();
@@ -656,26 +855,28 @@ $("qForm").addEventListener("submit",function(e){
   else ts=Date.now()-(+whenH)*HR;
   if(lat===null||lng===null)return;
   if(state.sample){state.points=[];state.sample=false;}
-  state.points.push({id:uid(),t:ts,lat:lat,lng:lng});save();pick=null;sel=0;$("maptag").textContent=t("zoneNow");
+  var ec=elevCache[llKey(lat,lng)],pt={id:uid(),t:ts,lat:lat,lng:lng,el:ec&&ec.m!=null?Math.round(ec.m):null};
+  state.points.push(pt);save();pick=null;sel=0;$("maptag").textContent=t("zoneNow");
+  if(!ec)fetchElevation(lat,lng).then(function(r){if(r&&r.m!=null&&state.points.indexOf(pt)>=0){pt.el=Math.round(r.m);save();render();}});
   audio();scanSound();showResult(true);
   $("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});
 });
 function showResult(animate){
-  render();fit();grow=0;
-  var T=A.last;if(!T){grow=1;return;}
-  if(animate)startFly({lat:T.lat,lng:T.lng},function(){growT0=performance.now();titi();if(layer==="google")gDraw();else checkTiles();});
-  else grow=1;
+  render();fit(false);
+  var T=A.last;if(!T){grow=1;drawZone();return;}
+  if(animate){grow=0;drawZone();startFly({lat:T.lat,lng:T.lng},function(){if(mapReady){map.invalidateSize();fit(false);}startGrow();titi();if(layer==="google")gDraw();else checkTiles();});}
+  else{grow=1;drawZone();}
 }
 $("replay").onclick=function(){if(A&&A.last){audio();scanSound();showResult(true);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}};
 ["setAvg","setMax"].forEach(function(id){$(id).addEventListener("change",function(){var v=parseFloat(this.value);if(isNaN(v)||v<=0){render();return;}state.set[id==="setAvg"?"avg":"max"]=v;if(state.set.max<state.set.avg)state.set.max=state.set.avg;save();render();});});
 function armed(b,fn){if(b.dataset.armed){fn();return;}var old=b.textContent;b.dataset.armed="1";b.textContent=t("sure");setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.textContent=old;}},3000);}
 document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;armed(b,function(){state.points=state.points.filter(function(p){return p.id!==b.dataset.del;});state.sample=false;save();render();if(layer==="google")gDraw();});});
-function clearAll(){state.points=[];state.sample=false;save();sel=0;pick=null;render();if(layer==="google")gDraw();$("coord").textContent="";toast(t("cleared"));}
+function clearAll(){state.points=[];state.sample=false;save();sel=0;pick=null;myLoc=null;render();if(layer==="google")gDraw();$("coord").textContent="";toast(t("cleared"));}
 $("clearOld").onclick=function(){armed(this,clearAll);};
 $("clearBtn").onclick=function(){armed(this,function(){state.points=[];state.sample=false;save();render();toast(t("cleared"));});};
 $("dlBtn").onclick=async function(){
   var clone=document.documentElement.cloneNode(true);
-  clone.querySelectorAll("script").forEach(function(s){if(s.id!=="seed"&&s.id!=="app-js")s.remove();});
+  clone.querySelectorAll("script").forEach(function(s){if(s.id!=="seed"&&s.id!=="app-js"&&s.id!=="leaflet-js")s.remove();});var mp=clone.querySelector("#map");if(mp){mp.innerHTML="";mp.className="";mp.removeAttribute("tabindex");mp.removeAttribute("style");}
   var sd=clone.querySelector("#seed");if(sd)sd.textContent=JSON.stringify(state);
   var tn=clone.querySelector("#toast");if(tn)tn.remove();var gd=clone.querySelector("#gmap");if(gd){gd.innerHTML="";gd.setAttribute("hidden","");gd.removeAttribute("style");}clone.querySelectorAll("script[src*='maps.googleapis']").forEach(function(x){x.remove();});
   var html="<!doctype html>\n"+clone.outerHTML;
@@ -685,6 +886,7 @@ $("dlBtn").onclick=async function(){
 var tt;function toast(m){var el=$("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";el.setAttribute("role","status");document.body.appendChild(el);}el.textContent=m;el.hidden=false;clearTimeout(tt);tt=setTimeout(function(){el.hidden=true;},2600);}
 
 /* ---------- boot ---------- */
+initMap();
 readColors();
 if(window.matchMedia)window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",readColors);
 new MutationObserver(readColors).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
@@ -692,13 +894,14 @@ if(window.ResizeObserver)new ResizeObserver(resize).observe(wrap);else window.ad
 window.__t=t;
 applyStatic();
 document.querySelectorAll(".lang button").forEach(function(b){b.onclick=function(){lang=b.dataset.lang;try{localStorage.setItem("tigerZoneLang",lang);}catch(e){}applyStatic();render();};});
-resize();$("attr").textContent=LAYERS[layer].attr;
+resize();$("bLayer").value=bhuvanName;
 if(state.sample){$("qLat").value="20.82000";$("qLng").value="80.75500";}
 render();fit();
 var savedLayer=null;try{savedLayer=localStorage.getItem("tigerZoneLayer");}catch(e){}
 $("gBtn").hidden=!gm.key;
 if(gm.key){$("gKey").value=gm.key;setKeyStatus(t("kHas"),"good");}
-setLayer((savedLayer&&LAYERS[savedLayer]&&savedLayer!=="google")?savedLayer:(savedLayer==="google"&&gm.key)?"google":"sat",true);
+setLayer(savedLayer==="google"?(gm.key?"google":"sat"):(savedLayer||"sat"),true);
+loadForest();
 showResult(true);
 setInterval(function(){if(!flying)render();},60000);
 requestAnimationFrame(loop);
