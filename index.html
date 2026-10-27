@@ -89,8 +89,6 @@ input.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 .err{font-size:.8rem;color:var(--outer);padding-left:4px}
 .when{margin-top:16px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.ring-lbl.t{background:#1F8A4C;color:#fff}
-.sexrow{margin-top:14px}
 .chip{border:0;background:var(--bg);border-radius:999px;padding:9px 16px;font-size:.95rem;box-shadow:var(--raise-sm);transition:box-shadow .15s}
 .chip[aria-pressed=true]{box-shadow:var(--press);color:var(--accent);font-weight:700}
 #customWhen{margin-top:10px}
@@ -257,15 +255,6 @@ details.card[open]>summary{margin-bottom:14px}
         <input type="datetime-local" id="customWhen" hidden data-ia="cc">
         <span class="err" id="eWhen"></span>
       </div>
-      <div class="when sexrow">
-        <span class="lbl" id="sexLbl" data-i="sexL"></span>
-        <div class="chips" role="group" aria-labelledby="sexLbl">
-          <button type="button" class="chip sx" data-sx="m" aria-pressed="false" data-i="sxM"></button>
-          <button type="button" class="chip sx" data-sx="f" aria-pressed="false" data-i="sxF"></button>
-          <button type="button" class="chip sx" data-sx="u" aria-pressed="true" data-i="sxU"></button>
-        </div>
-        <p class="note sm" id="terrNote"></p>
-      </div>
       <button type="submit" class="go" data-i="go"></button>
       <p class="tip" data-i="tip"></p>
     </form>
@@ -334,7 +323,6 @@ details.card[open]>summary{margin-bottom:14px}
       <button type="button" class="btn sm" id="labelsBtn" aria-pressed="true"></button>
       <button type="button" class="btn sm" id="forestBtn" aria-pressed="false" disabled></button>
       <button type="button" class="btn sm" id="bhuvanBtn" aria-pressed="false"></button>
-      <button type="button" class="btn sm" id="rs2ColBtn" aria-pressed="false" hidden></button>
     </div>
     <p class="note sm ovl-s" id="ovlStatus" aria-live="polite"></p>
     <div class="credit">
@@ -361,11 +349,6 @@ details.card[open]>summary{margin-bottom:14px}
       <div class="f"><label for="setMax" data-i="max"></label><input type="number" id="setMax" min="0.5" step="0.5"></div>
     </div>
     <p class="note" data-i="speedNote"></p>
-    <div class="row">
-      <div class="f"><label for="setTm" data-i="terrM"></label><input type="number" id="setTm" min="5" step="5"></div>
-      <div class="f"><label for="setTf" data-i="terrF"></label><input type="number" id="setTf" min="2" step="1"></div>
-    </div>
-    <p class="note" data-i="terrSrc"></p>
     <form id="keyForm" novalidate style="margin-top:18px">
       <div class="f"><label for="gKey">Google Maps API key</label><input type="password" id="gKey" autocomplete="off" placeholder="AIza..."></div>
       <div class="mapbar" style="padding:12px 0 0">
@@ -398,13 +381,13 @@ details.card[open]>summary{margin-bottom:14px}
 <script id="app-js">
 (function(){
 "use strict";
-var HR=3600e3, KEY="tigerZoneSimple.v1", FLOOR=0.5, CAP=60, TERR={m:150,f:25};
+var HR=3600e3, KEY="tigerZoneSimple.v1", FLOOR=0.5, CAP=60;
 var $=function(id){return document.getElementById(id);};
 var I18N={
-hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",lStreet:"सड़क मैप",lTopo:"पहाड़/जंगल",lBase:"बेस मैप",mapIs:"मैप:",mnOsm:"OpenStreetMap (सड़क/गाँव)",mnStreet:"सड़क मैप – Esri",mnSat:"सैटेलाइट – Esri World Imagery",mnS2:"सैटेलाइट – Sentinel-2 (ESA/EOX, 10 मी.)",mnTopo:"पहाड़/जंगल – OpenTopoMap",mnGoogle:"Google Maps (Hybrid)",mnRs2:"Resourcesat-2A LISS-IV (ISRO, 5.8 मी., {col}) · {date}",sexL:"बाघ नर है या मादा? (इलाके के हिसाब से)",sxM:"नर (Male)",sxF:"मादा (Female)",sxU:"पता नहीं",terrM:"नर बाघ का इलाका (कि.मी.²)",terrF:"मादा बाघ का इलाका (कि.मी.²)",terrSrc:"शुरुआती मान: पन्ना टाइगर रिज़र्व (मध्य भारत) के रेडियो-कॉलर अध्ययन में नर का इलाका लगभग 110–200 कि.मी.², मादा का 16–31 कि.मी.² मिला। अपने वनमंडल के कैमरा-ट्रैप/कॉलर डेटा से बदलें।",terrNote:"इलाका ≈ {a} कि.मी.² (त्रिज्या {r} कि.मी., हरा घेरा)। अपने इलाके में रहने वाला बाघ आम तौर पर इसी में रहता है — इसलिए ज़्यादा से ज़्यादा {km} कि.मी.। नया/भटकता बाघ इससे बाहर भी जा सकता है।",terrNoteU:"नर/मादा चुनने पर उसके इलाके (टेरिटरी) का हरा घेरा दिखेगा और दूरी उसी के हिसाब से सीमित होगी।",terrLblM:"नर का इलाका ~{a} कि.मी.²",terrLblF:"मादा का इलाका ~{a} कि.मी.²",terrCap:"इलाके के हिसाब से अधिकतम {km} कि.मी.",colNatBtn:"रंग: प्राकृतिक ✓ (लाल देखें)",colFccBtn:"रंग: लाल FCC ✓ (प्राकृतिक देखें)",colNat:"प्राकृतिक रंग",colFcc:"FCC",rs2Nat:"यह प्राकृतिक रंग जैसी तस्वीर है (हरा = जंगल)। इस सैटेलाइट में नीला बैंड नहीं होता, इसलिए रंग अनुमानित हैं। जंगल अलग से पहचानने के लिए 'लाल FCC' चुनें।",rs2Zoom:"इस नक्शे में बहुत ज़्यादा ज़ूम नहीं होता — और बारीक देखने के लिए 'सैटेलाइट' चुनें।",rs2Fcc:"यह ISRO की FCC तस्वीर है: लाल = हरी वनस्पति/जंगल, नीला-काला = पानी, सफ़ेद-भूरा = खुली ज़मीन/बस्ती।",mnBhuvan:"Bhuvan भूमि उपयोग",rs2None:"Resourcesat-2 की तस्वीर अभी वेबसाइट में नहीं डाली गई है। data/resourcesat2/README.md देखें।",rs2Checking:"Resourcesat-2 डेटा जाँचा जा रहा है…",nOsmFb:"OpenStreetMap की तस्वीरें नहीं आईं, इसलिए Esri का सड़क मैप दिखाया गया है।",sublineNow:"आख़िरी बार देखा: {t} (अभी-अभी) · {ll}",geoBtn:"मेरी वर्तमान लोकेशन लें",gBusy:"लोकेशन ली जा रही है…",gOk:"लोकेशन मिल गई · सटीकता ±{acc} मी.",gAlt:" · GPS ऊँचाई ~{alt} मी.",gDenied:"लोकेशन की अनुमति नहीं मिली। ब्राउज़र में इस साइट को Location की अनुमति दें और दोबारा दबाएँ।",gUnavail:"लोकेशन उपलब्ध नहीं। फ़ोन का GPS/Location चालू करें और खुले में दोबारा कोशिश करें।",gTimeout:"लोकेशन मिलने में बहुत समय लगा। दोबारा कोशिश करें।",gNoSupport:"यह ब्राउज़र लोकेशन सपोर्ट नहीं करता।",gInsecure:"लोकेशन सिर्फ़ https:// वाली वेबसाइट पर चलती है।",myLoc:"आपकी लोकेशन",elev:"ऊँचाई (समुद्र तल से, मीटर)",elevPh:"लोकेशन डालते ही अपने आप आएगी",elevBusy:"ऊँचाई निकाली जा रही है…",mUnit:"मी.",elevNA:"उपलब्ध नहीं",elevFrom:"स्रोत: {src} · DEM से अनुमानित, ±कुछ मीटर का अंतर संभव",elevFail:"ऊँचाई सेवा से जवाब नहीं मिला (इंटरनेट या सेवा बंद)। बाकी सब काम करता रहेगा।",elevNone:"इस जगह की ऊँचाई का डेटा उपलब्ध नहीं है।",elevShort:"ऊँचाई",loadingMap:"मैप लोड हो रहा है…",overlays:"मैप परतें",forestOn:"वन सीमा: चालू",forestOff:"वन सीमा: बंद",forestNA:"वन सीमा: डेटा नहीं",bhuvanOn:"Bhuvan भूमि उपयोग: चालू",bhuvanOff:"Bhuvan भूमि उपयोग: बंद",fNone:"वन सीमा: सत्यापित GIS फ़ाइल अभी नहीं डाली गई है, इसलिए कोई सीमा नहीं दिखाई जा रही।",fUnverified:"वन सीमा फ़ाइल में स्रोत और सत्यापन (metadata) की जानकारी नहीं है, इसलिए नहीं दिखाई गई।",fInvalid:"वन सीमा फ़ाइल सही GeoJSON नहीं है, इसलिए नहीं दिखाई गई।",fErr:"वन सीमा फ़ाइल लोड नहीं हुई।",fOk:"वन सीमा: {name} · स्रोत: {src} · सत्यापन: {by}, {on}",inF:"वन सीमा के अंदर",outF:"वन सीमा के बाहर",bLoading:"Bhuvan परत लोड हो रही है…",bOk:"Bhuvan भूमि उपयोग (LULC 1:50,000) दिख रहा है। यह कानूनी वन सीमा नहीं है।",bErr:"Bhuvan सर्वर से यह परत नहीं मिली (सर्वर बंद या layer का नाम गलत)। सेटिंग्स में नाम जाँचें।",nNoLib:"मैप लाइब्रेरी (Leaflet) लोड नहीं हुई। इंटरनेट जाँचें। बाकी हिसाब चलता रहेगा।",bLayer:"Bhuvan WMS layer का नाम",bSave:"लागू करें",bNote:"डिफ़ॉल्ट: छत्तीसगढ़ LULC 2015-16 (lulc:CG_LULC50K_1516)। सही नाम Bhuvan के GetCapabilities में जाँचें।",srcTitle:"डेटा स्रोत और शर्तें",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड, Google key)",keySave:"Key सेव करें",keyShow:"दिखाएँ",keyHide:"छुपाएँ",keyClear:"Key हटाएँ",keyNote:"Key सिर्फ़ इसी ब्राउज़र में सेव होती है। Google Cloud में key पर अपनी वेबसाइट का पता (Website restriction) ज़रूर लगाएँ।",kEmpty:"पहले key पेस्ट करें।",kBad:"यह Google key जैसी नहीं लगती (AIza से शुरू होती है)।",kSaved:"Key सेव हो गई।",kRemoved:"Key हटा दी।",kHas:"Key सेव है।",kLoading:"Google Maps लोड हो रहा है…",kOk:"Google Maps चल रहा है।",kReload:"Key बदली है। पेज रीलोड करें।",nNoKey:"Google Maps के लिए API key चाहिए। नीचे \"सेटिंग्स\" खोलें और key डालें।",kFail:"Google Maps नहीं खुला। Key सही है? Google Cloud में Maps JavaScript API चालू है, billing जुड़ी है, और इस वेबसाइट का पता allow है? (Claude के प्रीव्यू में Google Maps नहीं चलता।)",labelsOn:"नाम / सड़कें: चालू",labelsOff:"नाम / सड़कें: बंद",credit:"सॉफ़्टवेयर डेवलप किया: शुभम",contact:"संपर्क:",copy:"ईमेल कॉपी करें",copied:"ईमेल कॉपी हो गया",selected:"ईमेल चुना हुआ है, कॉपी कर लें",oldTxt:"पहले से सेव लोकेशन हटानी हैं?",clearOld:"पुराना डेटा हटाएँ",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
+hi:{title:"बाघ कहाँ हो सकता है?",sub:"टाइगर ज़ोन ट्रैकर · लोकेशन डालें, ज़ोन देखें",s1:"बाघ की लोकेशन डालें",lat:"अक्षांश (Latitude)",lng:"देशांतर (Longitude)",when:"बाघ कब देखा गया?",c0:"अभी",c6:"6 घंटे पहले",c24:"कल",c48:"2 दिन पहले",cc:"तारीख चुनें",go:"पता करें",tip:"मैप पर टैप करके भी लोकेशन चुन सकते हैं।",sample:"अभी सैंपल लोकेशन दिख रही है। अपनी लोकेशन डालते ही यह हट जाएगी।",resEye:"परिणाम · अभी",kmIn:"कि.मी. के अंदर",s2:"समय के हिसाब से दूरी",s2note:"किसी भी लाइन पर टैप करें, मैप पर उस समय का ज़ोन दिखेगा।",th1:"कितने समय बाद",th2:"तारीख / समय",th3:"ज़्यादा संभावना",th4:"ज़्यादा से ज़्यादा",s3:"मैप",skip:"छोड़ें",mapType:"मैप का प्रकार",lSat:"सैटेलाइट",lMap:"मैप",lStreet:"सड़क मैप",lTopo:"पहाड़/जंगल",lBase:"बेस मैप",mapIs:"मैप:",mnOsm:"OpenStreetMap (सड़क/गाँव)",mnStreet:"सड़क मैप – Esri",mnSat:"सैटेलाइट – Esri World Imagery",mnS2:"सैटेलाइट – Sentinel-2 (ESA/EOX, 10 मी.)",mnTopo:"पहाड़/जंगल – OpenTopoMap",mnGoogle:"Google Maps (Hybrid)",mnRs2:"Resourcesat-2A LISS-IV (ISRO, 5.8 मी., FCC) · {date}",rs2Fcc:"यह ISRO की FCC तस्वीर है: लाल = हरी वनस्पति/जंगल, नीला-काला = पानी, सफ़ेद-भूरा = खुली ज़मीन/बस्ती। ज़्यादा ज़ूम करने पर बारीक तस्वीर आती है।",mnBhuvan:"Bhuvan भूमि उपयोग",rs2None:"Resourcesat-2 की तस्वीर अभी वेबसाइट में नहीं डाली गई है। data/resourcesat2/README.md देखें।",rs2Checking:"Resourcesat-2 डेटा जाँचा जा रहा है…",nOsmFb:"OpenStreetMap की तस्वीरें नहीं आईं, इसलिए Esri का सड़क मैप दिखाया गया है।",sublineNow:"आख़िरी बार देखा: {t} (अभी-अभी) · {ll}",geoBtn:"मेरी वर्तमान लोकेशन लें",gBusy:"लोकेशन ली जा रही है…",gOk:"लोकेशन मिल गई · सटीकता ±{acc} मी.",gAlt:" · GPS ऊँचाई ~{alt} मी.",gDenied:"लोकेशन की अनुमति नहीं मिली। ब्राउज़र में इस साइट को Location की अनुमति दें और दोबारा दबाएँ।",gUnavail:"लोकेशन उपलब्ध नहीं। फ़ोन का GPS/Location चालू करें और खुले में दोबारा कोशिश करें।",gTimeout:"लोकेशन मिलने में बहुत समय लगा। दोबारा कोशिश करें।",gNoSupport:"यह ब्राउज़र लोकेशन सपोर्ट नहीं करता।",gInsecure:"लोकेशन सिर्फ़ https:// वाली वेबसाइट पर चलती है।",myLoc:"आपकी लोकेशन",elev:"ऊँचाई (समुद्र तल से, मीटर)",elevPh:"लोकेशन डालते ही अपने आप आएगी",elevBusy:"ऊँचाई निकाली जा रही है…",mUnit:"मी.",elevNA:"उपलब्ध नहीं",elevFrom:"स्रोत: {src} · DEM से अनुमानित, ±कुछ मीटर का अंतर संभव",elevFail:"ऊँचाई सेवा से जवाब नहीं मिला (इंटरनेट या सेवा बंद)। बाकी सब काम करता रहेगा।",elevNone:"इस जगह की ऊँचाई का डेटा उपलब्ध नहीं है।",elevShort:"ऊँचाई",loadingMap:"मैप लोड हो रहा है…",overlays:"मैप परतें",forestOn:"वन सीमा: चालू",forestOff:"वन सीमा: बंद",forestNA:"वन सीमा: डेटा नहीं",bhuvanOn:"Bhuvan भूमि उपयोग: चालू",bhuvanOff:"Bhuvan भूमि उपयोग: बंद",fNone:"वन सीमा: सत्यापित GIS फ़ाइल अभी नहीं डाली गई है, इसलिए कोई सीमा नहीं दिखाई जा रही।",fUnverified:"वन सीमा फ़ाइल में स्रोत और सत्यापन (metadata) की जानकारी नहीं है, इसलिए नहीं दिखाई गई।",fInvalid:"वन सीमा फ़ाइल सही GeoJSON नहीं है, इसलिए नहीं दिखाई गई।",fErr:"वन सीमा फ़ाइल लोड नहीं हुई।",fOk:"वन सीमा: {name} · स्रोत: {src} · सत्यापन: {by}, {on}",inF:"वन सीमा के अंदर",outF:"वन सीमा के बाहर",bLoading:"Bhuvan परत लोड हो रही है…",bOk:"Bhuvan भूमि उपयोग (LULC 1:50,000) दिख रहा है। यह कानूनी वन सीमा नहीं है।",bErr:"Bhuvan सर्वर से यह परत नहीं मिली (सर्वर बंद या layer का नाम गलत)। सेटिंग्स में नाम जाँचें।",nNoLib:"मैप लाइब्रेरी (Leaflet) लोड नहीं हुई। इंटरनेट जाँचें। बाकी हिसाब चलता रहेगा।",bLayer:"Bhuvan WMS layer का नाम",bSave:"लागू करें",bNote:"डिफ़ॉल्ट: छत्तीसगढ़ LULC 2015-16 (lulc:CG_LULC50K_1516)। सही नाम Bhuvan के GetCapabilities में जाँचें।",srcTitle:"डेटा स्रोत और शर्तें",zin:"ज़ूम इन",zout:"ज़ूम आउट",zfit:"बाघ पर वापस",close:"बंद करें",earth:"Google Earth (असली सैटेलाइट)",replay:"स्पेस से दोबारा देखें",soundOn:"आवाज़: चालू",soundOff:"आवाज़: बंद",hist:"पिछली लोकेशन",histNote:"जितनी ज़्यादा लोकेशन डालेंगे, बाघ की असली स्पीड उतनी सही निकलेगी। 4 या ज़्यादा लोकेशन होने पर स्पीड इन्हीं से निकलती है।",clear:"सब साफ़ करें (नया बाघ)",dl:"फ़ाइल डाउनलोड करें",settings:"सेटिंग्स (स्पीड, Google key)",keySave:"Key सेव करें",keyShow:"दिखाएँ",keyHide:"छुपाएँ",keyClear:"Key हटाएँ",keyNote:"Key सिर्फ़ इसी ब्राउज़र में सेव होती है। Google Cloud में key पर अपनी वेबसाइट का पता (Website restriction) ज़रूर लगाएँ।",kEmpty:"पहले key पेस्ट करें।",kBad:"यह Google key जैसी नहीं लगती (AIza से शुरू होती है)।",kSaved:"Key सेव हो गई।",kRemoved:"Key हटा दी।",kHas:"Key सेव है।",kLoading:"Google Maps लोड हो रहा है…",kOk:"Google Maps चल रहा है।",kReload:"Key बदली है। पेज रीलोड करें।",nNoKey:"Google Maps के लिए API key चाहिए। नीचे \"सेटिंग्स\" खोलें और key डालें।",kFail:"Google Maps नहीं खुला। Key सही है? Google Cloud में Maps JavaScript API चालू है, billing जुड़ी है, और इस वेबसाइट का पता allow है? (Claude के प्रीव्यू में Google Maps नहीं चलता।)",labelsOn:"नाम / सड़कें: चालू",labelsOff:"नाम / सड़कें: बंद",credit:"सॉफ़्टवेयर डेवलप किया: शुभम",contact:"संपर्क:",copy:"ईमेल कॉपी करें",copied:"ईमेल कॉपी हो गया",selected:"ईमेल चुना हुआ है, कॉपी कर लें",oldTxt:"पहले से सेव लोकेशन हटानी हैं?",clearOld:"पुराना डेटा हटाएँ",avg:"सामान्य स्पीड (कि.मी./दिन)",max:"अधिकतम स्पीड (कि.मी./दिन)",speedNote:"यह स्पीड तब इस्तेमाल होती है जब लोकेशन कम हों।",foot:"हिसाब: दूरी = स्पीड × समय। पीला घेरा = सामान्य स्पीड से, लाल घेरा = अधिकतम स्पीड से। यह संभावना बताता है, पक्की लोकेशन नहीं।",
 headline:"ज़्यादा से ज़्यादा <span class=\"out\">{km} कि.मी.</span> तक जा सकता है",subline:"आख़िरी बार देखा: {t} ({ago} पहले) · {ll}",noLoc:"पहले लोकेशन डालें",noLocRow:"पहले लोकेशन डालें।",hours:"घंटे",days:"दिन",justNow:"अभी-अभी",later:"बाद",since:"आख़िरी बार देखने से {d}",onMap:"मैप पर",onMapSel:"मैप पर ✓",zoneNow:"ज़ोन: अभी",zoneAt:"ज़ोन: {x} बाद",a0:"अभी",a6:"6 घंटे",a12:"12 घंटे",a24:"24 घंटे (1 दिन)",a48:"2 दिन",a72:"3 दिन",lastLoc:"आख़िरी लोकेशन",locN:"लोकेशन {n}",picked:"लोकेशन भर दी। अब \"पता करें\" दबाएँ।",errNum:"{name} {min} से {max} के बीच लिखें",latN:"अक्षांश",lngN:"देशांतर",errDate:"तारीख और समय चुनें",errFuture:"आगे की तारीख नहीं चल सकती",noHist:"कोई लोकेशन नहीं।",del:"हटाएँ",sure:"पक्का? दोबारा दबाएँ",cleared:"साफ़ हो गया। नई लोकेशन डालें।",saved:"फ़ाइल सेव हो गई।",dlFail:"यहाँ डाउनलोड नहीं हुआ",
 nTiles:"मैप की तस्वीरें लोड नहीं हो रहीं। इंटरनेट जाँचें या ऊपर से दूसरा मैप चुनें।"},
-en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",lStreet:"Street",lTopo:"Terrain",lBase:"Base map",mapIs:"Map:",mnOsm:"OpenStreetMap (roads/villages)",mnStreet:"Street map – Esri",mnSat:"Satellite – Esri World Imagery",mnS2:"Satellite – Sentinel-2 (ESA/EOX, 10 m)",mnTopo:"Terrain – OpenTopoMap",mnGoogle:"Google Maps (Hybrid)",mnRs2:"Resourcesat-2A LISS-IV (ISRO, 5.8 m, {col}) · {date}",sexL:"Is the tiger male or female? (territory)",sxM:"Male",sxF:"Female",sxU:"Not known",terrM:"Male territory (km²)",terrF:"Female territory (km²)",terrSrc:"Starting values: a radio-collar study in Panna Tiger Reserve (central India) found male ranges of about 110–200 km² and female ranges of 16–31 km². Replace with your division's camera-trap/collar data.",terrNote:"Territory ≈ {a} km² (radius {r} km, green circle). A resident tiger usually stays inside it, so at most {km} km. A new or dispersing tiger can go beyond it.",terrNoteU:"Choose male/female to show its territory (green circle) and limit the distance to it.",terrLblM:"Male territory ~{a} km²",terrLblF:"Female territory ~{a} km²",terrCap:"max {km} km by territory",colNatBtn:"Colour: natural ✓ (see red)",colFccBtn:"Colour: red FCC ✓ (see natural)",colNat:"natural colour",colFcc:"FCC",rs2Nat:"This is a natural-colour style image (green = forest). This satellite has no blue band, so colours are approximate. Choose 'red FCC' to pick out forest clearly.",rs2Zoom:"This map cannot zoom in very far — choose 'Satellite' for finer detail.",rs2Fcc:"This is an ISRO false-colour (FCC) image: red = green vegetation/forest, blue-black = water, white-brown = open land/settlements.",mnBhuvan:"Bhuvan land use",rs2None:"The Resourcesat-2 image has not been added to the website yet. See data/resourcesat2/README.md.",rs2Checking:"Checking Resourcesat-2 data…",nOsmFb:"OpenStreetMap images didn't load, so the Esri street map is shown instead.",sublineNow:"Last seen: {t} (just now) · {ll}",geoBtn:"Get current location",gBusy:"Getting location…",gOk:"Location found · accuracy ±{acc} m",gAlt:" · GPS altitude ~{alt} m",gDenied:"Location permission was denied. Allow Location for this site in the browser and press again.",gUnavail:"Location unavailable. Turn on the phone's GPS/Location and try again in the open.",gTimeout:"Getting the location took too long. Try again.",gNoSupport:"This browser doesn't support location.",gInsecure:"Location works only on an https:// website.",myLoc:"Your location",elev:"Elevation (above sea level, m)",elevPh:"Fills in automatically after a location",elevBusy:"Getting elevation…",mUnit:"m",elevNA:"Not available",elevFrom:"Source: {src} · DEM estimate, may differ by a few metres",elevFail:"The elevation service did not respond (no internet or service down). Everything else still works.",elevNone:"No elevation data is available for this spot.",elevShort:"Elevation",loadingMap:"Loading map…",overlays:"Map layers",forestOn:"Forest boundary: On",forestOff:"Forest boundary: Off",forestNA:"Forest boundary: no data",bhuvanOn:"Bhuvan land use: On",bhuvanOff:"Bhuvan land use: Off",fNone:"Forest boundary: no verified GIS file has been added yet, so no boundary is shown.",fUnverified:"The forest boundary file has no source and verification metadata, so it is not shown.",fInvalid:"The forest boundary file is not valid GeoJSON, so it is not shown.",fErr:"Couldn't load the forest boundary file.",fOk:"Forest boundary: {name} · source: {src} · verified by {by}, {on}",inF:"inside forest boundary",outF:"outside forest boundary",bLoading:"Loading Bhuvan layer…",bOk:"Showing Bhuvan land use (LULC 1:50,000). This is not a legal forest boundary.",bErr:"The Bhuvan server didn't return this layer (server down or wrong layer name). Check the name in Settings.",nNoLib:"The map library (Leaflet) didn't load. Check the internet; calculations still work.",bLayer:"Bhuvan WMS layer name",bSave:"Apply",bNote:"Default: Chhattisgarh LULC 2015-16 (lulc:CG_LULC50K_1516). Verify the name in Bhuvan's GetCapabilities.",srcTitle:"Data sources and terms",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed, Google key)",keySave:"Save key",keyShow:"Show",keyHide:"Hide",keyClear:"Remove key",keyNote:"The key is saved only in this browser. In Google Cloud, restrict the key to your website address.",kEmpty:"Paste a key first.",kBad:"This doesn't look like a Google key (it starts with AIza).",kSaved:"Key saved.",kRemoved:"Key removed.",kHas:"Key is saved.",kLoading:"Loading Google Maps…",kOk:"Google Maps is running.",kReload:"Key changed. Reload the page.",nNoKey:"Google Maps needs an API key. Open \"Settings\" below and add it.",kFail:"Google Maps didn't open. Is the key correct, is Maps JavaScript API enabled with billing, and is this website allowed on the key? (Google Maps doesn't run inside Claude's preview.)",labelsOn:"Names / roads: On",labelsOff:"Names / roads: Off",credit:"Software developed by Shubham",contact:"Contact:",copy:"Copy email",copied:"Email copied",selected:"Email selected, copy it",oldTxt:"Remove previously saved locations?",clearOld:"Remove old data",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
+en:{title:"Where could the tiger be?",sub:"Tiger Zone Tracker · enter location, see zone",s1:"Enter tiger location",lat:"Latitude",lng:"Longitude",when:"When was the tiger seen?",c0:"Now",c6:"6 hours ago",c24:"Yesterday",c48:"2 days ago",cc:"Pick date",go:"Find zone",tip:"You can also tap the map to pick a location.",sample:"Showing a sample location. It goes away when you enter your own.",resEye:"Result · now",kmIn:"km radius",s2:"Distance by time",s2note:"Tap any row to see that time's zone on the map.",th1:"Time from now",th2:"Date / time",th3:"Most likely",th4:"Farthest",s3:"Map",skip:"Skip",mapType:"Map type",lSat:"Satellite",lMap:"Map",lStreet:"Street",lTopo:"Terrain",lBase:"Base map",mapIs:"Map:",mnOsm:"OpenStreetMap (roads/villages)",mnStreet:"Street map – Esri",mnSat:"Satellite – Esri World Imagery",mnS2:"Satellite – Sentinel-2 (ESA/EOX, 10 m)",mnTopo:"Terrain – OpenTopoMap",mnGoogle:"Google Maps (Hybrid)",mnRs2:"Resourcesat-2A LISS-IV (ISRO, 5.8 m, FCC) · {date}",rs2Fcc:"This is an ISRO false-colour (FCC) image: red = green vegetation/forest, blue-black = water, white-brown = open land/settlements. Zoom in for full detail.",mnBhuvan:"Bhuvan land use",rs2None:"The Resourcesat-2 image has not been added to the website yet. See data/resourcesat2/README.md.",rs2Checking:"Checking Resourcesat-2 data…",nOsmFb:"OpenStreetMap images didn't load, so the Esri street map is shown instead.",sublineNow:"Last seen: {t} (just now) · {ll}",geoBtn:"Get current location",gBusy:"Getting location…",gOk:"Location found · accuracy ±{acc} m",gAlt:" · GPS altitude ~{alt} m",gDenied:"Location permission was denied. Allow Location for this site in the browser and press again.",gUnavail:"Location unavailable. Turn on the phone's GPS/Location and try again in the open.",gTimeout:"Getting the location took too long. Try again.",gNoSupport:"This browser doesn't support location.",gInsecure:"Location works only on an https:// website.",myLoc:"Your location",elev:"Elevation (above sea level, m)",elevPh:"Fills in automatically after a location",elevBusy:"Getting elevation…",mUnit:"m",elevNA:"Not available",elevFrom:"Source: {src} · DEM estimate, may differ by a few metres",elevFail:"The elevation service did not respond (no internet or service down). Everything else still works.",elevNone:"No elevation data is available for this spot.",elevShort:"Elevation",loadingMap:"Loading map…",overlays:"Map layers",forestOn:"Forest boundary: On",forestOff:"Forest boundary: Off",forestNA:"Forest boundary: no data",bhuvanOn:"Bhuvan land use: On",bhuvanOff:"Bhuvan land use: Off",fNone:"Forest boundary: no verified GIS file has been added yet, so no boundary is shown.",fUnverified:"The forest boundary file has no source and verification metadata, so it is not shown.",fInvalid:"The forest boundary file is not valid GeoJSON, so it is not shown.",fErr:"Couldn't load the forest boundary file.",fOk:"Forest boundary: {name} · source: {src} · verified by {by}, {on}",inF:"inside forest boundary",outF:"outside forest boundary",bLoading:"Loading Bhuvan layer…",bOk:"Showing Bhuvan land use (LULC 1:50,000). This is not a legal forest boundary.",bErr:"The Bhuvan server didn't return this layer (server down or wrong layer name). Check the name in Settings.",nNoLib:"The map library (Leaflet) didn't load. Check the internet; calculations still work.",bLayer:"Bhuvan WMS layer name",bSave:"Apply",bNote:"Default: Chhattisgarh LULC 2015-16 (lulc:CG_LULC50K_1516). Verify the name in Bhuvan's GetCapabilities.",srcTitle:"Data sources and terms",zin:"Zoom in",zout:"Zoom out",zfit:"Back to tiger",close:"Close",earth:"Google Earth (real satellite)",replay:"Replay from space",soundOn:"Sound: On",soundOff:"Sound: Off",hist:"Previous locations",histNote:"The more locations you add, the more accurate the tiger's own speed becomes. With 4 or more locations, speed is worked out from them.",clear:"Clear all (new tiger)",dl:"Download file",settings:"Settings (speed, Google key)",keySave:"Save key",keyShow:"Show",keyHide:"Hide",keyClear:"Remove key",keyNote:"The key is saved only in this browser. In Google Cloud, restrict the key to your website address.",kEmpty:"Paste a key first.",kBad:"This doesn't look like a Google key (it starts with AIza).",kSaved:"Key saved.",kRemoved:"Key removed.",kHas:"Key is saved.",kLoading:"Loading Google Maps…",kOk:"Google Maps is running.",kReload:"Key changed. Reload the page.",nNoKey:"Google Maps needs an API key. Open \"Settings\" below and add it.",kFail:"Google Maps didn't open. Is the key correct, is Maps JavaScript API enabled with billing, and is this website allowed on the key? (Google Maps doesn't run inside Claude's preview.)",labelsOn:"Names / roads: On",labelsOff:"Names / roads: Off",credit:"Software developed by Shubham",contact:"Contact:",copy:"Copy email",copied:"Email copied",selected:"Email selected, copy it",oldTxt:"Remove previously saved locations?",clearOld:"Remove old data",avg:"Normal speed (km/day)",max:"Max speed (km/day)",speedNote:"Used when there are only a few locations.",foot:"Method: distance = speed × time. Yellow = normal speed, red = maximum speed. This shows the likely area, not the exact location.",
 headline:"Can go at most <span class=\"out\">{km} km</span>",subline:"Last seen: {t} ({ago} ago) · {ll}",noLoc:"Enter a location first",noLocRow:"Enter a location first.",hours:"hours",days:"days",justNow:"just now",later:"from now",since:"since last seen: {d}",onMap:"On map",onMapSel:"On map ✓",zoneNow:"Zone: now",zoneAt:"Zone: in {x}",a0:"Now",a6:"6 hours",a12:"12 hours",a24:"24 hours (1 day)",a48:"2 days",a72:"3 days",lastLoc:"Last location",locN:"Location {n}",picked:"Location filled. Now press \"Find zone\".",errNum:"Enter {name} between {min} and {max}",latN:"latitude",lngN:"longitude",errDate:"Pick a date and time",errFuture:"Future dates are not allowed",noHist:"No locations.",del:"Remove",sure:"Sure? Press again",cleared:"Cleared. Enter a new location.",saved:"File saved.",dlFail:"Download didn't work here",
 nTiles:"Map images aren't loading. Check the internet or pick another map above."}
 };
@@ -442,17 +425,6 @@ var state=load();
 
 /* ---------- maths ---------- */
 function hav(a,b){var R=6371,r=Math.PI/180,dLa=(b.lat-a.lat)*r,dLo=(b.lng-a.lng)*r;var s=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dLo/2)*Math.sin(dLo/2);return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));}
-/* Territory (home range): a resident tiger mostly stays inside its own range.
-   Range centre = average of sightings in the 60 days before the last one; radius from area (km²). */
-function terrSet(){if(!state.set.tm)state.set.tm=TERR.m;if(!state.set.tf)state.set.tf=TERR.f;if(!state.sex)state.sex="u";}
-function territory(S,last){
-  terrSet();if(!last||(state.sex!=="m"&&state.sex!=="f"))return null;
-  var area=state.sex==="m"?state.set.tm:state.set.tf,r=Math.sqrt(area/Math.PI);
-  var pts=S.filter(function(p){return last.t-p.t<=60*24*HR;}),c={lat:0,lng:0};
-  pts.forEach(function(p){c.lat+=p.lat;c.lng+=p.lng;});c.lat/=pts.length;c.lng/=pts.length;
-  var d0=hav(last,c);if(d0>r){c={lat:last.lat,lng:last.lng};d0=0;}
-  return {lat:c.lat,lng:c.lng,r:r,area:area,cap:d0+r,sex:state.sex};
-}
 function analyze(nowMs){
   var S=state.points.slice().sort(function(a,b){return a.t-b.t;}),segs=[],i;
   for(i=1;i<S.length;i++){var d=hav(S[i-1],S[i]),h=Math.max((S[i].t-S[i-1].t)/HR,6);segs.push({d:d,h:(S[i].t-S[i-1].t)/HR,speed:d/h*24});}
@@ -463,10 +435,9 @@ function analyze(nowMs){
     avg=dsum/hsum*24;max=Math.max(sp[Math.min(sp.length-1,Math.round(0.9*(sp.length-1)))],avg*1.5);
   }
   var last=S[S.length-1]||null,el=last?Math.max(0,(nowMs-last.t)/HR):0;
-  var terr=territory(S,last),cap=terr?terr.cap:CAP;
-  function reach(h){return {inner:Math.min(avg*h/24+FLOOR,cap,CAP),outer:Math.min(max*h/24+FLOOR,cap,CAP)};}
+  function reach(h){return {inner:Math.min(avg*h/24+FLOOR,CAP),outer:Math.min(max*h/24+FLOOR,CAP)};}
   var r=reach(el);
-  return {S:S,segs:segs,own:own,avg:avg,max:max,last:last,el:el,inner:r.inner,outer:r.outer,reach:reach,terr:terr};
+  return {S:S,segs:segs,own:own,avg:avg,max:max,last:last,el:el,inner:r.inner,outer:r.outer,reach:reach};
 }
 function dur(h){var d=Math.floor(h/24),r=Math.round(h-d*24);if(r===24){d++;r=0;}if(d<=0)return r<1?t("justNow"):r+" "+t("hours");return d+" "+t("days")+(r?" "+r+" "+t("hours"):"");}
 function dt(ms){var d=new Date(ms),L=lang==="hi"?"hi-IN":"en-IN";return d.toLocaleDateString(L,{day:"numeric",month:"short"})+", "+d.toLocaleTimeString(L,{hour:"numeric",minute:"2-digit"});}
@@ -487,7 +458,7 @@ var SRC={
   s2:{url:"https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg",o:{maxZoom:19,maxNativeZoom:15,attribution:'<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> by EOX IT Services GmbH (Contains modified Copernicus Sentinel data 2020)'}},
   topo:{url:"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",o:{maxZoom:19,maxNativeZoom:17,subdomains:"abc",attribution:'Map data: '+ATTR_OSM+', SRTM | Style: &copy; <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)'}}
 };
-var rs2={state:"checking",meta:null,layer:null,nat:true};try{if(localStorage.getItem("tigerZoneRs2Col")==="fcc")rs2.nat=false;}catch(e){}
+var rs2={state:"checking",meta:null,layer:null};
 var BHUVAN_WMS="https://bhuvan-vec2.nrsc.gov.in/bhuvan/wms",BHUVAN_DEF="lulc:CG_LULC50K_1516";
 var bhuvanName=BHUVAN_DEF;try{bhuvanName=localStorage.getItem("tigerZoneBhuvanLayer")||BHUVAN_DEF;}catch(e){}
 var bhuvanOn=false,bhuvanStat="idle";
@@ -538,7 +509,6 @@ function updateOverlays(){
   $("labelsBtn").hidden=!(layer==="sat"||layer==="s2"||layer==="rs2"||layer==="google");$("labelsBtn").disabled=layer==="google";
   $("labelsBtn").textContent=t(labelsOn?"labelsOn":"labelsOff");$("labelsBtn").setAttribute("aria-pressed",String(labelsOn));
   $("forestBtn").disabled=forest.state!=="ok";$("forestBtn").textContent=forest.state!=="ok"?t("forestNA"):t(forestOn?"forestOn":"forestOff");$("forestBtn").setAttribute("aria-pressed",String(forestOn&&forest.state==="ok"));
-  var cb=$("rs2ColBtn");cb.hidden=!(layer==="rs2"&&rs2.state==="ok"&&rs2.meta&&rs2.meta.natural);cb.textContent=t(rs2.nat?"colNatBtn":"colFccBtn");cb.setAttribute("aria-pressed",String(!rs2.nat));
   $("bhuvanBtn").textContent=t(bhuvanOn?"bhuvanOn":"bhuvanOff");$("bhuvanBtn").setAttribute("aria-pressed",String(bhuvanOn));$("bhuvanBtn").disabled=!mapReady||layer==="google";
   ovlStatus();
 }
@@ -564,8 +534,6 @@ function drawZone(){
   if(pick)addV(L.marker([pick.lat,pick.lng],{icon:divI('<span class="tz-pick"></span>'),interactive:false,keyboard:false}));
   if(!A||!A.last)return;
   var P=A.last,c=[P.lat,P.lng],z=zone();
-  if(A.terr){var T=A.terr;addV(L.circle([T.lat,T.lng],{radius:T.r*1000,color:"#1F8A4C",weight:2.5,dashArray:"8 6",fill:true,fillOpacity:0.04,fillColor:"#1F8A4C",interactive:false}));
-    addV(L.marker(northOf(T,T.r),{icon:divI('<span class="ring-lbl t">'+esc(t(T.sex==="m"?"terrLblM":"terrLblF",{a:Math.round(T.area)}))+'</span>'),interactive:false,keyboard:false}));}
   V.outer=addV(L.circle(c,{radius:Math.max(1,z.outer*1000*grow),color:colors.outer,weight:3,fillColor:colors.outer,fillOpacity:0.14,interactive:false}));
   V.inner=addV(L.circle(c,{radius:Math.max(1,z.inner*1000*grow),color:colors.inner,weight:3,fillColor:colors.inner,fillOpacity:0.26,interactive:false}));
   if(!reduce)V.pulse=addV(L.circle(c,{radius:1,color:colors.outer,weight:3,fill:false,opacity:0,interactive:false}));
@@ -699,21 +667,20 @@ function loadForest(){
 }
 /* ---------- Resourcesat-2 LISS-III (self-hosted tiles in data/resourcesat2/) ---------- */
 function rs2Overlays(m){
-  var base="data/resourcesat2/",grp=L.layerGroup(),cache={},ov=null,dz=m.detail_zoom||12,nat=rs2.nat&&!!m.natural;
-  function fn(f){return nat?f.replace(/^c_/,m.natural.prefix||"n_"):f;}
-  if(m.overview&&m.overview.file)ov=L.imageOverlay(base+(nat&&m.natural.overview?m.natural.overview:m.overview.file),m.overview.bounds,{pane:"rs2",interactive:false,
+  var base="data/resourcesat2/",grp=L.layerGroup(),cache={},ov=null,dz=m.detail_zoom||12;
+  if(m.overview&&m.overview.file)ov=L.imageOverlay(base+m.overview.file,m.overview.bounds,{pane:"rs2",interactive:false,
     attribution:"Resourcesat-2A LISS-IV ("+esc(m.scene_date)+") &copy; NRSC/ISRO · "+esc(m.source)});
-  function img(c){var k=fn(c.file);if(!cache[k]){cache[k]=L.imageOverlay(base+k,c.bounds,{pane:"rs2",interactive:false});
+  function img(c){var k=c.file;if(!cache[k]){cache[k]=L.imageOverlay(base+c.file,c.bounds,{pane:"rs2",interactive:false});
     cache[k].on("load",function(){setLoading("rs2:"+k,false);});cache[k].on("error",function(){setLoading("rs2:"+k,false);});}return cache[k];}
   function update(){
     if(!map.hasLayer(grp))return;
     var z=map.getZoom(),vb=map.getBounds().pad(0.25);
     if(ov){if(!grp.hasLayer(ov))grp.addLayer(ov);}
     (m.chunks||[]).forEach(function(c){var o=img(c),want=z>=dz&&vb.intersects(L.latLngBounds(c.bounds));
-      if(want&&!grp.hasLayer(o)){setLoading("rs2:"+fn(c.file),true);grp.addLayer(o);}else if(!want&&grp.hasLayer(o))grp.removeLayer(o);});
+      if(want&&!grp.hasLayer(o)){setLoading("rs2:"+c.file,true);grp.addLayer(o);}else if(!want&&grp.hasLayer(o))grp.removeLayer(o);});
   }
   grp.on("add",function(){update();});
-  map.on("moveend zoomend",update);grp._upd=update;
+  map.on("moveend zoomend",update);
   return grp;
 }
 function loadRs2(){
@@ -729,7 +696,7 @@ function loadRs2(){
         attribution:esc(m.satellite)+" "+esc(m.sensor)+" ("+esc(m.scene_date)+") &copy; NRSC/ISRO · "+esc(m.source)}),"rs2");
     }
     if(layer==="rs2")setLayer("rs2",true);
-    showMapName();updateOverlays();
+    showMapName();
   }).catch(function(){rs2.state="none";if(layer==="rs2")setLayer("sat",true);});
 }
 $("forestBtn").onclick=function(){if(forest.state!=="ok")return;forestOn=!forestOn;try{localStorage.setItem("tigerZoneForest",forestOn?"1":"0");}catch(e){}updateOverlays();};
@@ -810,7 +777,7 @@ $("keyForm").addEventListener("submit",function(e){e.preventDefault();var k=$("g
 $("keyShow").onclick=function(){var i=$("gKey");i.type=i.type==="password"?"text":"password";this.textContent=t(i.type==="password"?"keyShow":"keyHide");};
 $("keyClear").onclick=function(){gm.key="";$("gKey").value="";try{localStorage.removeItem("tigerZoneGKey");}catch(_){}setKeyStatus(t("kRemoved"),"");$("gBtn").hidden=true;if(layer==="google")setLayer("sat",true);};
 function showMapName(){var k={osm:"mnOsm",street:"mnStreet",sat:"mnSat",s2:"mnS2",topo:"mnTopo",google:"mnGoogle",rs2:"mnRs2"}[layer]||"mnSat";
-  var x=t(k,{date:rs2.meta&&rs2.meta.scene_date||"",col:t(rs2.nat&&rs2.meta&&rs2.meta.natural?"colNat":"colFcc")});if(bhuvanOn&&layer!=="google")x+=" + "+t("mnBhuvan");$("mapName").textContent=t("mapIs")+" "+x;}
+  var x=t(k,{date:rs2.meta&&rs2.meta.scene_date||""});if(bhuvanOn&&layer!=="google")x+=" + "+t("mnBhuvan");$("mapName").textContent=t("mapIs")+" "+x;}
 function setLayer(l,auto){
   if(l==="osm")l="street";if(l!=="google"&&l!=="rs2"&&!SRC[l])l="sat";
   layer=l;document.querySelectorAll(".mtop .seg button").forEach(function(o){o.setAttribute("aria-pressed",String(o.dataset.layer===l));});
@@ -821,9 +788,7 @@ function setLayer(l,auto){
   if(l==="rs2"&&rs2.state!=="ok"){showNote("rs2",t(rs2.state==="checking"?"rs2Checking":"rs2None"));if(rs2.state!=="checking"){setLayer(layer==="rs2"?"sat":layer,true);return;}}
   if(mapReady){var want=l==="rs2"?["sat"]:[l];Object.keys(BASE).forEach(function(k){if(want.indexOf(k)<0)toggleLayer(BASE[k],false);});want.forEach(function(k){toggleLayer(BASE[k],true);});toggleLayer(rs2.layer,l==="rs2");map.invalidateSize();if(l!=="rs2")checkTiles();
     if(l==="rs2"&&rs2.meta&&rs2.meta.bounds){try{var rb=L.latLngBounds(rs2.meta.bounds);if(A&&A.last&&rb.contains([A.last.lat,A.last.lng]))fit(true);else map.fitBounds(rb,{padding:[20,20]});}catch(e){}}
-    if(l!=="rs2"&&noteKind==="rs2fcc")$("mapnote").hidden=true;
-    map.setMaxZoom(l==="rs2"&&rs2.meta&&rs2.meta.max_zoom?Math.max(12,+rs2.meta.max_zoom):19);
-    if(l==="rs2"&&rs2.state==="ok")showNote("rs2fcc",t(rs2.nat&&rs2.meta.natural?"rs2Nat":"rs2Fcc")+" "+t("rs2Zoom"));}
+    if(l==="rs2"&&rs2.state==="ok")showNote("rs2fcc",t("rs2Fcc"));}
   updateOverlays();showMapName();
 }
 document.querySelectorAll(".mtop .seg button").forEach(function(b){b.onclick=function(){setLayer(b.dataset.layer);};});
@@ -887,11 +852,6 @@ function beep(f,d,delay){var a=audio();if(!a)return;var t=a.currentTime+(delay||
 function titi(){if(!soundOn)return;beep(1175,0.1,0);beep(1175,0.1,0.16);beep(1568,0.18,0.32);}
 function scanSound(){if(!soundOn)return;for(var i=0;i<6;i++)beep(660+i*60,0.05,i*0.3);}
 function tick(){if(soundOn)beep(988,0.06,0);}
-$("rs2ColBtn").onclick=function(){
-  rs2.nat=!rs2.nat;try{localStorage.setItem("tigerZoneRs2Col",rs2.nat?"nat":"fcc");}catch(e){}
-  if(rs2.meta&&rs2.meta.type==="overlays"&&map){var on=rs2.layer&&map.hasLayer(rs2.layer);if(rs2.layer){if(rs2.layer._upd)map.off("moveend zoomend",rs2.layer._upd);if(on)map.removeLayer(rs2.layer);}
-    rs2.layer=rs2Overlays(rs2.meta);if(on)rs2.layer.addTo(map);}
-  updateOverlays();showMapName();if(layer==="rs2"){noteClosed.rs2fcc=false;showNote("rs2fcc",t(rs2.nat?"rs2Nat":"rs2Fcc")+" "+t("rs2Zoom"));}};
 $("labelsBtn").onclick=function(){labelsOn=!labelsOn;try{localStorage.setItem("tigerZoneLabels",labelsOn?"1":"0");}catch(e){}updateOverlays();};
 $("copyMail").onclick=function(){var b=this,m="hexorhexor66@gmail.com";function sel(){var r=document.createRange();r.selectNodeContents($("mailTxt"));var g=window.getSelection();g.removeAllRanges();g.addRange(r);toast(t("selected"));}
   try{navigator.clipboard.writeText(m).then(function(){toast(t("copied"));},sel);}catch(e){sel();}};
@@ -916,7 +876,6 @@ function render(){
     $("headline").innerHTML=t("headline",{km:km(A.outer)});
     var extra=(A.last.el!=null?" · "+t("elevShort")+" "+Math.round(A.last.el)+" "+t("mUnit"):""),inF=inForest(A.last);
     if(inF!==null)extra+=" · "+t(inF?"inF":"outF");
-    if(A.terr)extra+=" · "+t("terrCap",{km:km(A.terr.cap)});
     $("subline").textContent=t(A.el<1?"sublineNow":"subline",{t:dt(A.last.t),ago:dur(A.el),ll:fmt(A.last.lat,5)+", "+fmt(A.last.lng,5)})+extra;
     var la=fmt(A.last.lat,5),lo=fmt(A.last.lng,5);showCoord(A.last);
     $("earthLink").href="https://earth.google.com/web/@"+la+","+lo+",300a,"+Math.round(Math.max(A.outer,2)*2600)+"d,35y,0h,0t,0r";
@@ -925,15 +884,12 @@ function render(){
   $("histCount").textContent=A.S.length;
   $("hist").innerHTML=A.S.map(function(p,i){return {h:"<li"+(i===A.S.length-1?" class=\"last\"":"")+"><span class=\"num\">"+(i+1)+"</span><span>"+esc(dt(p.t))+"<small class=\"mono\">"+fmt(p.lat,5)+", "+fmt(p.lng,5)+(p.el!=null?" · "+Math.round(p.el)+" "+t("mUnit"):"")+"</small></span><button type=\"button\" class=\"x\" data-del=\""+esc(p.id)+"\">"+t("del")+"</button></li>"};}).reverse().map(function(r){return r.h;}).join("")||"<li style=\"grid-template-columns:1fr\">"+t("noHist")+"</li>";
   ["avg","max"].forEach(function(k){var el=$("set"+(k==="avg"?"Avg":"Max"));if(document.activeElement!==el)el.value=state.set[k];});
-  terrSet();["tm","tf"].forEach(function(k){var el=$(k==="tm"?"setTm":"setTf");if(document.activeElement!==el)el.value=state.set[k];});
-  document.querySelectorAll(".chip.sx").forEach(function(c){c.setAttribute("aria-pressed",String(c.dataset.sx===state.sex));});
-  $("terrNote").textContent=A.terr?t("terrNote",{a:Math.round(A.terr.area),r:km(A.terr.r),km:km(A.terr.cap)}):t("terrNoteU");
   if(!growT0)drawZone();
 }
 
 /* ---------- form ---------- */
 var whenH=0;
-document.querySelectorAll(".chip:not(.sx)").forEach(function(c){c.onclick=function(){document.querySelectorAll(".chip:not(.sx)").forEach(function(o){o.setAttribute("aria-pressed",String(o===c));});whenH=c.dataset.h;$("customWhen").hidden=whenH!=="custom";if(whenH==="custom"&&!$("customWhen").value)$("customWhen").value=localInput(Date.now()-24*HR);$("eWhen").textContent="";};});
+document.querySelectorAll(".chip").forEach(function(c){c.onclick=function(){document.querySelectorAll(".chip").forEach(function(o){o.setAttribute("aria-pressed",String(o===c));});whenH=c.dataset.h;$("customWhen").hidden=whenH!=="custom";if(whenH==="custom"&&!$("customWhen").value)$("customWhen").value=localInput(Date.now()-24*HR);$("eWhen").textContent="";};});
 ["qLat","qLng"].forEach(function(id){$(id).addEventListener("input",function(){$(id==="qLat"?"eLat":"eLng").textContent="";maybeElev();});});
 function parseNum(id,min,max,err,name){var raw=String($(id).value).trim().replace(",","."),v=parseFloat(raw);if(!raw||isNaN(v)||v<min||v>max){$(err).textContent=t("errNum",{name:t(name),min:min,max:max});return null;}return v;}
 $("qForm").addEventListener("submit",function(e){
@@ -956,8 +912,6 @@ function showResult(animate){
   else{grow=1;drawZone();}
 }
 $("replay").onclick=function(){if(A&&A.last){audio();scanSound();showResult(true);$("mapwrap").scrollIntoView({behavior:reduce?"auto":"smooth",block:"center"});}};
-document.querySelectorAll(".chip.sx").forEach(function(c){c.onclick=function(){state.sex=c.dataset.sx;save();render();if(A&&A.last){startGrow();fit(true);}if(layer==="google")gDraw();};});
-["setTm","setTf"].forEach(function(id){$(id).addEventListener("change",function(){var v=parseFloat(this.value);if(isNaN(v)||v<=0){render();return;}state.set[id==="setTm"?"tm":"tf"]=v;save();render();});});
 ["setAvg","setMax"].forEach(function(id){$(id).addEventListener("change",function(){var v=parseFloat(this.value);if(isNaN(v)||v<=0){render();return;}state.set[id==="setAvg"?"avg":"max"]=v;if(state.set.max<state.set.avg)state.set.max=state.set.avg;save();render();});});
 function armed(b,fn){if(b.dataset.armed){fn();return;}var old=b.textContent;b.dataset.armed="1";b.textContent=t("sure");setTimeout(function(){if(b.isConnected){delete b.dataset.armed;b.textContent=old;}},3000);}
 document.addEventListener("click",function(e){var b=e.target.closest("[data-del]");if(!b)return;armed(b,function(){state.points=state.points.filter(function(p){return p.id!==b.dataset.del;});state.sample=false;save();render();if(layer==="google")gDraw();});});
